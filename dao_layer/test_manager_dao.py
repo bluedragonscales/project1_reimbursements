@@ -6,19 +6,23 @@ def test_login():
 # as a manager, I should be able to approve reimbursement requests because they are legitimate and leave a message
 def test_approve_reimbursement_happy():
     pass
+    # put these reimbursements in a filed list because they have already been dealt with.
 
 
 # as a manager, I should be able to deny reimbursement requests because they are illegitimate and leave a message.
 def test_deny_reimbursement_happy():
     pass
+    # Put these reimbursement requests in the filed list because they have already been dealt with.
 
 
 # as a manager, I should be able to view pending reimbursement requests so I can make decisions about them
 def test_view_all_reimbursement_requests_happy():
     pass
 
+
 def test_view_pending_reimbursement_requests_happy():
     pass
+    # This will come from the pending list in the employee modules.
 
 # as a manager, I should be able to view past reimbursement requests so I can check previous decisions
 def test_view_approved_failed_requests():

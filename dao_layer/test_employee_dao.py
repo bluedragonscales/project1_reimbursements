@@ -15,6 +15,7 @@ def test_login():
 # as an employee, I should be able to submit new reimbursement requests so I can get money back from the company
 def test_submit_reimbursement():
     pass
+    # Put these in a pending list.
 
 # as an employee, I should be able to review my reimbursement requests so I can know if they are approved or denied
 def test_view_reimbursement_per_employee():
