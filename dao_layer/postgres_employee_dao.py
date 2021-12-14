@@ -4,21 +4,22 @@ from database_connection import connection
 
 
 class PostgresEmployeeDAO(EmployeeDAO):
-    reimbursement_pending_list = []
-
 
     def login(self, employee_id: int):
         pass
 
 
 
-    def submit_reimbursement(self, employee_id: int, reimbursement: Reimbursement) -> Reimbursement:
-        sql = 'insert into "project1".reimbursement values(default, %s, %s, %s, "Pending") returning reimburse_id'
+    def submit_reimbursement(self, reimbursement: Reimbursement) -> Reimbursement:
+        sql = 'insert into "project1".reimbursement values(default, %s, %s, %s, %s) returning reimburse_id'
         cursor = connection.cursor()
-        cursor.execute(sql, (employee_id, reimbursement.request_label, reimbursement.amount))
+        cursor.execute(sql, (reimbursement.employee_id,
+                             reimbursement.request_label,
+                             reimbursement.amount,
+                             reimbursement.status))
         reimburse_id = cursor.fetchone()[0]
         reimbursement.reimburse_id = reimburse_id
-        PostgresEmployeeDAO.reimbursement_pending_list.append(reimbursement.reimburse_id)
+        connection.commit()
         return reimbursement
 
 

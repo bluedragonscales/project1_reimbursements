@@ -5,7 +5,7 @@ employee_dao = PostgresEmployeeDAO()
 
 
 # Created reimbursement objects for testing.
-create_reimbursement = Reimbursement(0, 0, "Pencils", 205.13, False)
+create_reimbursement = Reimbursement(0, 4, "lots of cookies", 205.13, "Pending")
 
 
 # Test for these stories.
@@ -17,7 +17,7 @@ def test_login_happy():
 
 # as an employee, I should be able to submit new reimbursement requests so I can get money back from the company
 def test_submit_reimbursement_happy():
-    new_reimbursement = employee_dao.submit_reimbursement(1, create_reimbursement)
+    new_reimbursement = employee_dao.submit_reimbursement(create_reimbursement)
     assert new_reimbursement.reimburse_id != 0
 
 

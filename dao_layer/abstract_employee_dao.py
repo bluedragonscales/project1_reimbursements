@@ -9,7 +9,7 @@ class EmployeeDAO(ABC):
         pass
 
     @abstractmethod
-    def submit_reimbursement(self, employee_id: int, reimbursement: Reimbursement) -> Reimbursement:
+    def submit_reimbursement(self, reimbursement: Reimbursement) -> Reimbursement:
         pass
 
     @abstractmethod
