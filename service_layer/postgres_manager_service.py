@@ -9,30 +9,29 @@ class PostgresManagerService(ManagerService):
         self.manager_dao: PostgresManagerDAO = manager_dao
 
 
-    def login(self):
-        return self.manager_dao.login()
-
-
-    def approve_reimbursement(self, reimburse_id: int):
+    def service_login(self):
         pass
 
-    def deny_reimbursement(self, reimburse_id: int):
+    def service_approve_reimbursement(self, reimburse_id: int):
+        return self.manager_dao.approve_reimbursement(reimburse_id)
+
+    def service_deny_reimbursement(self, reimburse_id: int):
+        return self.manager_dao.deny_reimbursement(reimburse_id)
+
+    def service_view_all_reimbursement_requests(self) -> list[Reimbursement]:
+        return self.manager_dao.view_all_reimbursement_requests()
+
+    def service_view_pending_reimbursement_requests(self) -> list[Reimbursement]:
+        return self.manager_dao.view_pending_reimbursement_requests()
+
+    def service_view_approved_requests(self) -> list[Reimbursement]:
+        return self.manager_dao.view_approved_requests()
+
+    def service_view_denied_requests(self) -> list[Reimbursement]:
+        return self.manager_dao.view_denied_requests()
+
+    def service_view_statistics(self):
         pass
 
-    def view_all_reimbursement_requests(self) -> list[Reimbursement]:
-        pass
-
-    def view_pending_reimbursement_requests(self) -> list[Reimbursement]:
-        pass
-
-    def view_approved_requests(self) -> list[Reimbursement]:
-        pass
-
-    def view_denied_requests(self) -> list[Reimbursement]:
-        pass
-
-    def view_statistics(self):
-        pass
-
-    def logout(self):
-        pass
+    def service_logout(self):
+        return self.manager_dao.logout()

@@ -1,28 +1,15 @@
+from dao_layer.postgres_manager_dao import PostgresManagerDAO
+from service_layer.postgres_manager_service import PostgresManagerService
 
-def login(self):
-    return self.manager_dao.login()
+manager_dao = PostgresManagerDAO()
+manager_service = PostgresManagerService(manager_dao)
 
 
-def test_approve_reimbursement():
+def test_login():
     pass
+    # Test to make sure correct login credentials are entered.
 
-def test_deny_reimbursement():
-    pass
 
-def test_view_all_reimbursement_requests():
-    pass
-
-def test_view_pending_reimbursement_requests():
-    pass
-
-def test_view_approved_requests():
-    pass
-
-def test_view_denied_requests():
-    pass
 
 def test_view_statistics():
-    pass
-
-def test_logout():
     pass

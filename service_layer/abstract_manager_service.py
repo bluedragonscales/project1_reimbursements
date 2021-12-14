@@ -5,35 +5,35 @@ from a_entities.reimbursement import Reimbursement
 class ManagerService(ABC):
 
     @abstractmethod
-    def login(self):
+    def service_login(self):
         pass
 
     @abstractmethod
-    def approve_reimbursement(self, reimburse_id: int):
+    def service_approve_reimbursement(self, reimburse_id: int):
         pass
 
     @abstractmethod
-    def deny_reimbursement(self, reimburse_id: int):
+    def service_deny_reimbursement(self, reimburse_id: int):
         pass
 
     @abstractmethod
-    def view_all_reimbursement_requests(self) -> list[Reimbursement]:
+    def service_view_all_reimbursement_requests(self) -> list[Reimbursement]:
         pass
 
     @abstractmethod
-    def view_pending_reimbursement_requests(self) -> list[Reimbursement]:
+    def service_view_pending_reimbursement_requests(self) -> list[Reimbursement]:
         pass
 
     @abstractmethod
-    def view_approved_requests(self) -> list[Reimbursement]:
+    def service_view_approved_requests(self) -> list[Reimbursement]:
         pass
 
     @abstractmethod
-    def view_denied_requests(self) -> list[Reimbursement]:
+    def service_view_denied_requests(self) -> list[Reimbursement]:
         pass
 
     @abstractmethod
-    def view_statistics(self):
+    def service_view_statistics(self):
         pass
     # View highest reimbursement request.
     # View lowest reimbursement request.
@@ -42,5 +42,5 @@ class ManagerService(ABC):
     # View how much reimbursement has been approved.
 
     @abstractmethod
-    def logout(self):
+    def service_logout(self):
         pass
