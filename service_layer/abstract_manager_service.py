@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from a_entities.reimbursement import Reimbursement
 
 
-class ManagerDAO(ABC):
+class ManagerService(ABC):
 
     @abstractmethod
     def login(self):
@@ -44,4 +44,3 @@ class ManagerDAO(ABC):
     @abstractmethod
     def logout(self):
         pass
-

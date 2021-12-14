@@ -1,11 +1,3 @@
-# Create reimbursements for employees. Employees will be logged and THEN their reimbursement requests
-# will be accepted or denied.
-
-# What would be the main entity for these employee reimbursement request scenarios?
-# An employee object could have a method to store reimbursement requests.
-# If the employee is already created as a table in postgres, then we could create just a reimbursement
-# object.
-
 
 class Reimbursement:
     def __init__(self, reimburse_id: int, employee_id: int, request_label: str, amount: float, status: str):

@@ -36,17 +36,5 @@ class PostgresEmployeeDAO(EmployeeDAO):
 
 
 
-    def view_reimbursement_status(self, reimburse_id: int):
-        sql = 'select approved from "project1".reimbursement where reimburse_id = %s'
-        cursor = connection.cursor()
-        cursor.execute(sql, [reimburse_id])
-        status = cursor.fetchone()[0]
-        if not status:
-            return "This reimbursement is pending approval."
-        else:
-            return "This reimbursement has been approved."
-
-
-
     def logout(self, employee_id):
         pass

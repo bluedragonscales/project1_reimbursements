@@ -17,9 +17,5 @@ class EmployeeDAO(ABC):
         pass
 
     @abstractmethod
-    def view_reimbursement_status(self, reimburse_id: int):
-        pass
-
-    @abstractmethod
     def logout(self, employee_id):
         pass
