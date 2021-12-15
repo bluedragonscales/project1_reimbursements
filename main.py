@@ -18,6 +18,10 @@ manager_service = PostgresManagerService(manager_dao)
 
 
 # These are the routes for the employee side.
+
+# LOGIN ROUTE
+
+
 @app.post("/employee/reimbursement")
 def submit_reimbursement():
     try:
@@ -41,16 +45,16 @@ def submit_reimbursement():
 
 @app.get("/employee/reimbursement/<employee_id>")
 def view_reimbursement_per_employee(employee_id: str):
-    try:
-        rb_results = employee_service.service_view_reimbursement_per_employee(int(employee_id))
-        results_as_dictionary = []
-        for rb in rb_results:
-            dictionary_rb = rb.reimbursement_dictionary()
-            results_as_dictionary.append(dictionary_rb)
-        return jsonify(results_as_dictionary)
-    except ListUnavailableException as u:
-        exception_dictionary = {"Message" : str(u)}
-        return jsonify(exception_dictionary)
+    rb_results = employee_service.service_view_reimbursement_per_employee(int(employee_id))
+    results_as_dictionary = []
+    for rb in rb_results:
+        dictionary_rb = rb.reimbursement_dictionary()
+        results_as_dictionary.append(dictionary_rb)
+    return jsonify(results_as_dictionary)
+
+
+
+# LOGOUT ROUTE
 
 
 
@@ -64,10 +68,5 @@ def view_all_reimbursement_requests():
         rb_as_dictionaries.append(dictionary_reimbursements)
     return jsonify(rb_as_dictionaries)
 
-    # The front end is not sending us a body of information so we don't need to do the request.get_json function.
-    # all_customers = customer_service.service_view_all_customers()
-    # customers_as_dictionaries = []
-    # for cust in all_customers:
-    #     dictionary_customers = cust.customer_dictionary()
-    #     customers_as_dictionaries.append(dictionary_customers)
-    # return jsonify(customers_as_dictionaries)
+
+app.run()

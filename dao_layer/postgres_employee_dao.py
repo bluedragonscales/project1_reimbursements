@@ -11,12 +11,11 @@ class PostgresEmployeeDAO(EmployeeDAO):
 
 
     def submit_reimbursement(self, reimbursement: Reimbursement) -> Reimbursement:
-        sql = 'insert into "project1".reimbursement values(default, %s, %s, %s, %s) returning reimburse_id'
+        sql = 'insert into "project1".reimbursement values(default, %s, %s, %s, default) returning reimburse_id'
         cursor = connection.cursor()
         cursor.execute(sql, (reimbursement.employee_id,
                              reimbursement.request_label,
-                             reimbursement.amount,
-                             reimbursement.status))
+                             reimbursement.amount))
         reimburse_id = cursor.fetchone()[0]
         reimbursement.reimburse_id = reimburse_id
         connection.commit()

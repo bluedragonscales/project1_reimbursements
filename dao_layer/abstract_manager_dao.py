@@ -9,11 +9,7 @@ class ManagerDAO(ABC):
         pass
 
     @abstractmethod
-    def approve_reimbursement(self, reimburse_id: int):
-        pass
-
-    @abstractmethod
-    def deny_reimbursement(self, reimburse_id: int):
+    def approve_deny_reimbursement(self, reimburse_id: int, status: str):
         pass
 
     @abstractmethod
@@ -21,16 +17,9 @@ class ManagerDAO(ABC):
         pass
 
     @abstractmethod
-    def view_pending_reimbursement_requests(self) -> list[Reimbursement]:
+    def view_reimburse_requests_per_status(self, status: str) -> list[Reimbursement]:
         pass
 
-    @abstractmethod
-    def view_approved_requests(self) -> list[Reimbursement]:
-        pass
-
-    @abstractmethod
-    def view_denied_requests(self) -> list[Reimbursement]:
-        pass
 
     @abstractmethod
     def view_statistics(self):

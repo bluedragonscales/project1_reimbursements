@@ -9,20 +9,10 @@ class PostgresManagerDAO(ManagerDAO):
         pass
 
 
-    def approve_reimbursement(self, reimburse_id: int):
-        sql = 'update "project1".reimbursement set status = "Approved" where reimburse_id = %s returning status'
+    def approve_deny_reimbursement(self, reimburse_id: int, status: str):
+        sql = 'update "project1".reimbursement set status = %s where reimburse_id = %s returning status'
         cursor = connection.cursor()
-        cursor.execute(sql, [reimburse_id])
-        status = cursor.fetchone()[0]
-        connection.commit()
-        return status
-
-
-
-    def deny_reimbursement(self, reimburse_id: int):
-        sql = 'update "project1".reimbursement set status = "Denied" where reimburse_id = %s returning status'
-        cursor = connection.cursor()
-        cursor.execute(sql, [reimburse_id])
+        cursor.execute(sql, (status, reimburse_id))
         status = cursor.fetchone()[0]
         connection.commit()
         return status
@@ -41,44 +31,21 @@ class PostgresManagerDAO(ManagerDAO):
 
 
 
-    def view_pending_reimbursement_requests(self) -> list[Reimbursement]:
-        sql = 'select * from "project1".reimbursement where status = "Pending"'
+    def view_reimburse_requests_per_status(self, status: str) -> list[Reimbursement]:
+        sql = 'select * from "project1".reimbursement where status = %s'
         cursor = connection.cursor()
-        cursor.execute(sql)
-        pending_records = cursor.fetchall()
-        pending_list = []
-        for reimburse in pending_records:
-            pending_list.append(Reimbursement(*reimburse))
-        return pending_list
-
-
-
-    def view_approved_requests(self) -> list[Reimbursement]:
-        sql = 'select * from "project1".reimbursement where status = "Approved"'
-        cursor = connection.cursor()
-        cursor.execute(sql)
-        approved_records = cursor.fetchall()
-        approved_list = []
-        for reimburse in approved_records:
-            approved_list.append(Reimbursement(*reimburse))
-        return approved_list
-
-
-
-    def view_denied_requests(self) -> list[Reimbursement]:
-        sql = 'select * from "project1".reimbursement where status = "Denied"'
-        cursor = connection.cursor()
-        cursor.execute(sql)
-        denied_records = cursor.fetchall()
-        denied_list = []
-        for reimburse in denied_records:
-            denied_list.append(Reimbursement(*reimburse))
-        return denied_list
+        cursor.execute(sql, [status])
+        reimburse_records = cursor.fetchall()
+        reimburse_list = []
+        for reimburse in reimburse_records:
+            reimburse_list.append(Reimbursement(*reimburse))
+        return reimburse_list
 
 
 
     def view_statistics(self):
         pass
+    # If one particular string, do that particular aggregate sql method to get the statistic.
 
 
 

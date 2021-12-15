@@ -9,11 +9,7 @@ class ManagerService(ABC):
         pass
 
     @abstractmethod
-    def service_approve_reimbursement(self, reimburse_id: int):
-        pass
-
-    @abstractmethod
-    def service_deny_reimbursement(self, reimburse_id: int):
+    def service_approve_deny_reimbursement(self, reimburse_id: int, status: str):
         pass
 
     @abstractmethod
@@ -21,15 +17,7 @@ class ManagerService(ABC):
         pass
 
     @abstractmethod
-    def service_view_pending_reimbursement_requests(self) -> list[Reimbursement]:
-        pass
-
-    @abstractmethod
-    def service_view_approved_requests(self) -> list[Reimbursement]:
-        pass
-
-    @abstractmethod
-    def service_view_denied_requests(self) -> list[Reimbursement]:
+    def service_view_reimburse_requests_per_status(self, status: str) -> list[Reimbursement]:
         pass
 
     @abstractmethod

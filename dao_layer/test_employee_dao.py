@@ -5,7 +5,7 @@ employee_dao = PostgresEmployeeDAO()
 
 
 # Created reimbursement objects for testing.
-create_reimbursement = Reimbursement(0, 4, "lots of cookies", 205.13, "Pending")
+create_reimbursement = Reimbursement(0, 9, "test this request deletion", 110.13, "")
 
 
 # as an employee, I should be able to login so I can manage my reimbursements
@@ -22,7 +22,7 @@ def test_submit_reimbursement_happy():
 
 def test_view_reimbursement_per_employee_happy():
     reimburse_list_for_employee = employee_dao.view_reimbursement_per_employee(4)
-    assert reimburse_list_for_employee > 0
+    assert len(reimburse_list_for_employee) > 0
 
 
 

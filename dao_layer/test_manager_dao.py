@@ -9,39 +9,21 @@ def test_login():
 
 
 
-def test_approve_reimbursement():
-    approve_status = manager_dao.approve_reimbursement(1)
+def test_approve_deny_reimbursement_happy():
+    approve_status = manager_dao.approve_deny_reimbursement(2, "Approved")
     assert approve_status == "Approved"
 
 
 
-def test_deny_reimbursement():
-    deny_status = manager_dao.deny_reimbursement(2)
-    assert deny_status == "Denied"
-
-
-
-def test_view_all_reimbursement_requests():
+def test_view_all_reimbursement_requests_happy():
     all_reimbursements = manager_dao.view_all_reimbursement_requests()
-    assert all_reimbursements > 0
+    assert len(all_reimbursements) > 0
 
 
 
-def test_view_pending_reimbursement_requests():
-    pending_reimbursements = manager_dao.view_pending_reimbursement_requests()
-    assert pending_reimbursements > 0
-
-
-
-def test_view_approved_requests():
-    approved_reimbursements = manager_dao.view_approved_requests()
-    assert approved_reimbursements > 0
-
-
-
-def test_view_denied_requests():
-    denied_reimbursements = manager_dao.view_denied_requests()
-    assert denied_reimbursements > 0
+def test_view_reimburse_requests_per_status_happy():
+    pending_reimbursements = manager_dao.view_reimburse_requests_per_status("Denied")
+    assert len(pending_reimbursements) >= 0
 
 
 
