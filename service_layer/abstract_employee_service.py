@@ -5,7 +5,7 @@ from a_entities.reimbursement import Reimbursement
 class EmployeeService(ABC):
 
     @abstractmethod
-    def service_login(self, employee_id: int):
+    def service_employee_login(self, employee_id: int):
         pass
 
     @abstractmethod
@@ -14,8 +14,4 @@ class EmployeeService(ABC):
 
     @abstractmethod
     def service_view_reimbursement_per_employee(self, employee_id: int) -> list[Reimbursement]:
-        pass
-
-    @abstractmethod
-    def service_logout(self, employee_id):
         pass

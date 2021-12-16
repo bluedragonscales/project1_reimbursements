@@ -8,9 +8,10 @@ employee_dao = PostgresEmployeeDAO()
 create_reimbursement = Reimbursement(0, 9, "test this request deletion", 110.13, "")
 
 
-# as an employee, I should be able to login so I can manage my reimbursements
-def test_login_happy():
-    pass
+
+def test_employee_login_happy():
+    credentials = employee_dao.employee_login(7)
+    assert credentials[1] == "whatever"
 
 
 
@@ -23,9 +24,3 @@ def test_submit_reimbursement_happy():
 def test_view_reimbursement_per_employee_happy():
     reimburse_list_for_employee = employee_dao.view_reimbursement_per_employee(4)
     assert len(reimburse_list_for_employee) > 0
-
-
-
-# as an employee, I should be able to logout so my information does not remain available on my computer
-def test_logout_happy():
-    pass

@@ -17,9 +17,6 @@ def test_validate_approve_deny_reimbursement():
         assert str(u) == "This reimbursement request does not exist."
 
 
-def test_validate_view_reimburse_requests_per_status():
-    pass
-
 
 def service_view_statistics(self):
     pass

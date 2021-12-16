@@ -5,7 +5,8 @@ manager_dao = PostgresManagerDAO()
 
 
 def test_login():
-    pass
+    credentials = manager_dao.manager_login(2)
+    assert credentials[1] == ""
 
 
 
@@ -28,9 +29,4 @@ def test_view_reimburse_requests_per_status_happy():
 
 
 def test_view_statistics():
-    pass
-
-
-
-def test_logout():
     pass

@@ -19,7 +19,7 @@ manager_service = PostgresManagerService(manager_dao)
 
 # These are the routes for the employee side.
 
-# LOGIN ROUTE
+# EMPLOYEE LOGIN ROUTE
 
 
 @app.post("/employee/reimbursement")
@@ -54,12 +54,29 @@ def view_reimbursement_per_employee(employee_id: str):
 
 
 
-# LOGOUT ROUTE
-
 
 
 # These are the routes for the manager side.
-@app.get("/manager/reimbursements")
+
+
+# MANAGER LOGIN ROUTE
+
+
+
+
+@app.patch("/manager/reimbursement/<reimburse_id>/<status>")
+def approve_deny_reimbursement(reimburse_id: str, status: str):
+    try:
+        manager_service.service_approve_deny_reimbursement(int(reimburse_id), status)
+        return f"Reimbursement id {int(reimburse_id)} has been {status}"
+    except UnavailableException as u:
+        exception_dictionary = {"Message": str(u)}
+        return jsonify(exception_dictionary)
+
+
+
+
+@app.get("/manager/reimbursement")
 def view_all_reimbursement_requests():
     all_reimbursements = manager_service.service_view_all_reimbursement_requests()
     rb_as_dictionaries = []
@@ -67,6 +84,20 @@ def view_all_reimbursement_requests():
         dictionary_reimbursements = all_rb.reimbursement_dictionary()
         rb_as_dictionaries.append(dictionary_reimbursements)
     return jsonify(rb_as_dictionaries)
+
+
+
+
+@app.get("/manager/reimbursement/<status>")
+def view_reimbursement_per_status(status: str):
+    reimburse_per_status = manager_service.service_view_reimburse_requests_per_status(status)
+    rb_status_as_dictionary = []
+    for rb_status in reimburse_per_status:
+        dictionary_rb_status = rb_status.reimbursement_dictionary()
+        rb_status_as_dictionary.append(dictionary_rb_status)
+    return jsonify(rb_status_as_dictionary)
+
+
 
 
 app.run()

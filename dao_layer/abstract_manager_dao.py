@@ -5,7 +5,7 @@ from a_entities.reimbursement import Reimbursement
 class ManagerDAO(ABC):
 
     @abstractmethod
-    def login(self):
+    def manager_login(self, manager_id: int):
         pass
 
     @abstractmethod
@@ -29,8 +29,4 @@ class ManagerDAO(ABC):
     # View total reimbursement value.
     # View how much reimbursement each employee has asked for.
     # View how much reimbursement has been approved.
-
-    @abstractmethod
-    def logout(self):
-        pass
 

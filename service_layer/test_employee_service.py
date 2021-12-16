@@ -8,9 +8,9 @@ employee_service = PostgresEmployeeService(employee_dao)
 
 
 
-def test_service_login():
+def test_validate_employee_login():
     pass
-
+# Test if the employee uses the right credentials.
 
 
 def test_validate_submit_reimbursement():

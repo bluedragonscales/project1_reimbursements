@@ -5,8 +5,16 @@ from database_connection import connection
 
 class PostgresEmployeeDAO(EmployeeDAO):
 
-    def login(self, employee_id: int):
-        pass
+    def employee_login(self, employee_id: int):
+        sql = 'select password from "project1".employee where employee_id = %s'
+        sql2 = 'select username from "project1".employee where employee_id = %s'
+        cursor = connection.cursor()
+        cursor.execute(sql, [employee_id])
+        password = cursor.fetchone()[0]
+        cursor.execute(sql2, [employee_id])
+        username = cursor.fetchone()[0]
+        credentials = (username, password)
+        return credentials
 
 
 
@@ -32,8 +40,3 @@ class PostgresEmployeeDAO(EmployeeDAO):
         for reimburse in reimburse_records:
             reimburse_list_per_employee.append(Reimbursement(*reimburse))
         return reimburse_list_per_employee
-
-
-
-    def logout(self, employee_id):
-        pass

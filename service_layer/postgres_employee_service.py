@@ -11,7 +11,7 @@ class PostgresEmployeeService(EmployeeService):
         self.employee_dao: PostgresEmployeeDAO = employee_dao
 
 
-    def service_login(self, employee_id: int):
+    def service_employee_login(self, employee_id: int):
         pass
 
 
@@ -25,7 +25,3 @@ class PostgresEmployeeService(EmployeeService):
 
     def service_view_reimbursement_per_employee(self, employee_id: int) -> list[Reimbursement]:
         return self.employee_dao.view_reimbursement_per_employee(employee_id)
-
-
-    def service_logout(self, employee_id):
-        pass
