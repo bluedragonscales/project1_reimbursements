@@ -3,16 +3,51 @@
   <head>
     <meta charset="utf-8">
     <title>Employee Home</title>
+    <link rel="stylesheet" href="styles/second-style.css">
   </head>
   <body>
-    <h1>Employee Portal</h1>
-    <nav>
-      <a href="#">Submit Reimbursement Request</a>
-      <a href="#">View Reimbursement Requests</a>
-    </nav>
+    <header class="sticky">
+      <h1>Employee Portal</h1>
+      <div>
+        <button>Submit Reimbursement Request</button>
+        <button>View Reimbursement Requests</button>
+      </div>
+    </header>
 
-    <section>
-      
+
+    <section class="request-reimbursement">
+      <form class="" action="index.html" method="post">
+        <input type="number" placeholder="Employee Id">
+        <input type="text" placeholder="Request purpose">
+        <input type="number" placeholder="Amount">
+        <input type="number" placeholder="Manager Id">
+        <input type="submit">
+      </form>
     </section>
+
+
+
+    <section class="view_reimbursements">
+      <h2>Your Reimbursement Requests</h2>
+      <table id="all-reimbursements">
+        <thead>
+          <th>Reimbursement Id</th>
+          <th>Employee Id</th>
+          <th>Request Purpose</th>
+          <th>Amount</th>
+          <th>Status</th>
+        </thead>
+        <tbody>
+          <tr>
+            <td>test</td>
+            <td>test</td>
+            <td>test</td>
+            <td>test</td>
+            <td>test</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
   </body>
 </html>

@@ -1,0 +1,49 @@
+* {
+  margin: 0;
+  /* border: red solid 2px; */
+  box-sizing: border-box;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: white;
+  background: #18BFF3;
+  height: 9rem;
+  text-align: center;
+  border: none;
+}
+
+header.sticky {
+  text-align: center;
+  position: sticky;
+  top: 0;
+  border: none;
+}
+
+button {
+  background-color: white;
+  color: #18BFF3;
+  padding: 0.7rem 2rem;
+  font-size: 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.view_reimbursements {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.view_reimbursements > h2 {
+  margin-bottom: 2rem;
+}
+
+table, th, td {
+  border: #18BFF3 solid 3px;
+  padding: 0.6rem;
+}
