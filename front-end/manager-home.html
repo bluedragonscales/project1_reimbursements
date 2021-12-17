@@ -3,8 +3,62 @@
   <head>
     <meta charset="utf-8">
     <title>Manager Home</title>
+    <link rel="stylesheet" href="styles/second-style.css">
   </head>
   <body>
+    <header class="sticky">
+      <h1>Manager Portal</h1>
+      <div>
+        <audio src="images/the-office-theme-song_01.mp3" controls>
+          This browser does not support the audio file.
+        </audio>
+      </div>
+      <div>
+        <button id="status" class="tablink" onclick="openTab(event, 'status-r')">Submit Reimbursement Status</button>
+        <button id="view" class="tablink" onclick="openTab(event, 'view-r')">View Reimbursement Requests</button>
+      </div>
+    </header>
+
+    <h2>Welcome</h2>
+    <p>Welcome to your manager portal for reimbursements.</p>
+    <p>Click on the tab "Submit Reimbursement Request" to submit a reimbursement. Click on the tab "View Reimbursement Requests" to view all reimbursements requests.</p>
+
+
+    <section id="status-r" class="tabcontent">
+      <h2>Change Reimbursement Status</h2>
+      <form method="post">
+        <input type="number" placeholder="Reimbursement Id" id="r-id">
+        <select name="status" id="reimburse-status">
+          <option value="Pending">Pending</option>
+          <option value="Approved">Approved</option>
+          <option value="Denied">Denied</option>
+        </select>
+        <input type="submit" id="submit-status">
+      </form>
+    </section>
+
+
+    <section id="view-r" class="tabcontent">
+      <h2>Your Reimbursement Requests</h2>
+      <div class="view-reimbursements">
+        <table>
+          <thead>
+            <th>Reimbursement Id</th>
+            <th>Employee Id</th>
+            <th>Request Purpose</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </thead>
+          <tbody id="r-body">
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <button>Log Out</button>
+    </footer>
 
   </body>
+  <script src="scripts/manager-script.js"></script>
 </html>

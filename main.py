@@ -7,10 +7,12 @@ from service_layer.postgres_employee_service import PostgresEmployeeService
 from service_layer.postgres_manager_service import PostgresManagerService
 from service_layer.custom_exceptions import *
 import logging
+from flask_cors import CORS
 
 logging.basicConfig(filename="records.log", level=logging.DEBUG, format=f"%(asctime)s %(levelname)s %(message)s")
 
 app = Flask(__name__)
+CORS(app)
 employee_dao = PostgresEmployeeDAO()
 employee_service = PostgresEmployeeService(employee_dao)
 manager_dao = PostgresManagerDAO()
@@ -50,7 +52,7 @@ def view_reimbursement_per_employee(employee_id: str):
     for rb in rb_results:
         dictionary_rb = rb.reimbursement_dictionary()
         results_as_dictionary.append(dictionary_rb)
-    return jsonify(results_as_dictionary)
+    return jsonify(results_as_dictionary), 200
 
 
 
@@ -83,7 +85,7 @@ def view_all_reimbursement_requests():
     for all_rb in all_reimbursements:
         dictionary_reimbursements = all_rb.reimbursement_dictionary()
         rb_as_dictionaries.append(dictionary_reimbursements)
-    return jsonify(rb_as_dictionaries)
+    return jsonify(rb_as_dictionaries), 200
 
 
 

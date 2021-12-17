@@ -4,7 +4,7 @@
   box-sizing: border-box;
 }
 
-header {
+header.sticky {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -13,13 +13,16 @@ header {
   height: 9rem;
   text-align: center;
   border: none;
-}
-
-header.sticky {
   text-align: center;
   position: sticky;
   top: 0;
   border: none;
+}
+
+audio::-webkit-media-controls-panel {
+  background-color: #18BFF3;
+  width: 100px;
+  height: 56px;
 }
 
 button {
@@ -27,11 +30,22 @@ button {
   color: #18BFF3;
   padding: 0.7rem 2rem;
   font-size: 1rem;
-  border-radius: 20px;
   cursor: pointer;
+  border: none;
 }
 
-.view_reimbursements {
+p {
+  text-align: center;
+  margin: 3rem 3rem;
+  margin-bottom: 5rem;
+}
+
+.tabcontent {
+  display: none;
+}
+
+
+.request-reimbursement {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -39,11 +53,53 @@ button {
   margin-top: 2rem;
 }
 
-.view_reimbursements > h2 {
-  margin-bottom: 2rem;
+.request-reimbursement > form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+form > input {
+  margin: 1rem;
+  padding: 4px 10px;
+  border: #18BFF3 solid 3px;
+}
+
+.submit-button {
+  color: white;
+  background-color: #18BFF3;
+}
+
+.view-reimbursements {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+#status-r {
+  text-align: center;
+}
+
+h2 {
+  margin-top: 2.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #18BFF3;
 }
 
 table, th, td {
   border: #18BFF3 solid 3px;
   padding: 0.6rem;
+}
+
+footer {
+  margin-top: 4rem;
+  margin-bottom: 0;
+  color: white;
+  background: #18BFF3;
+  height: 7rem;
+  text-align: center;
+  border: none;
 }
