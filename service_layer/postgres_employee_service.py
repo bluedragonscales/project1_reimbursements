@@ -11,8 +11,12 @@ class PostgresEmployeeService(EmployeeService):
         self.employee_dao: PostgresEmployeeDAO = employee_dao
 
 
-    def service_employee_login(self, employee_id: int):
-        pass
+    def service_employee_login(self, employee_id: int, password: str):
+        validation = self.employee_dao.employee_login(employee_id, password)
+        if validation:
+            return True
+        else:
+            return False
 
 
     def service_submit_reimbursement(self, reimburse: Reimbursement) -> Reimbursement:

@@ -5,13 +5,13 @@ employee_dao = PostgresEmployeeDAO()
 
 
 # Created reimbursement objects for testing.
-create_reimbursement = Reimbursement(0, 9, "test this request deletion", 110.13, "")
+create_reimbursement = Reimbursement(0, 6, "Cat supplies for visiting cats.", 60.61, "")
 
 
 
 def test_employee_login_happy():
-    credentials = employee_dao.employee_login(7)
-    assert credentials[1] == "whatever"
+    valid_login = employee_dao.employee_login(7, "whatever")
+    assert valid_login
 
 
 

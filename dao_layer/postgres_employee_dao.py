@@ -5,16 +5,15 @@ from database_connection import connection
 
 class PostgresEmployeeDAO(EmployeeDAO):
 
-    def employee_login(self, employee_id: int):
+    def employee_login(self, employee_id: int, password: str):
         sql = 'select password from "project1".employee where employee_id = %s'
-        sql2 = 'select username from "project1".employee where employee_id = %s'
         cursor = connection.cursor()
         cursor.execute(sql, [employee_id])
-        password = cursor.fetchone()[0]
-        cursor.execute(sql2, [employee_id])
-        username = cursor.fetchone()[0]
-        credentials = (username, password)
-        return credentials
+        validate = cursor.fetchone()[0]
+        if validate == password:
+            return True
+        else:
+            return False
 
 
 

@@ -9,8 +9,9 @@ employee_service = PostgresEmployeeService(employee_dao)
 
 
 def test_validate_employee_login():
-    pass
-# Test if the employee uses the right credentials.
+    not_validated = employee_service.service_employee_login(7, "watevr")
+    assert not_validated == False
+
 
 
 def test_validate_submit_reimbursement():

@@ -5,7 +5,7 @@ from a_entities.reimbursement import Reimbursement
 class ManagerDAO(ABC):
 
     @abstractmethod
-    def manager_login(self, manager_id: int):
+    def manager_login(self, manager_id: int, password: str):
         pass
 
     @abstractmethod

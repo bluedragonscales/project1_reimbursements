@@ -20,8 +20,19 @@ manager_service = PostgresManagerService(manager_dao)
 
 
 # These are the routes for the employee side.
+@app.post("/employee/login/<employee_id>")
+def employee_login(employee_id: str):
+    login_body = request.get_json()
+    username = int(employee_id)
+    password = login_body["password"]
+    validated = employee_service.service_employee_login(username, password)
+    if validated:
+        good_message = {"Validated" : True}
+        return jsonify(good_message)
+    else:
+        bad_message = {"Validated" : False}
+        return jsonify(bad_message)
 
-# EMPLOYEE LOGIN ROUTE
 
 
 @app.post("/employee/reimbursement")
@@ -59,21 +70,30 @@ def view_reimbursement_per_employee(employee_id: str):
 
 
 # These are the routes for the manager side.
+@app.post("/manager/login/<manager_id>")
+def employee_login(manager_id: str):
+    login_body = request.get_json()
+    username = int(manager_id)
+    password = login_body["password"]
+    validated = manager_service.service_manager_login(username, password)
+    if validated:
+        good_message = {"Validated" : True}
+        return jsonify(good_message)
+    else:
+        bad_message = {"Validated" : False}
+        return jsonify(bad_message)
 
 
-# MANAGER LOGIN ROUTE
 
+@app.patch("/manager/reimbursement/<reimburse_id>")
+def approve_deny_reimbursement(reimburse_id: str):
+    status_data = request.get_json()
+    new_status = status_data["status"]
+    status_id = int(reimburse_id)
+    status_to_return = manager_service.service_approve_deny_reimbursement(status_id, new_status)
+    status_as_json = jsonify(status_to_return)
+    return status_as_json
 
-
-
-@app.patch("/manager/reimbursement/<reimburse_id>/<status>")
-def approve_deny_reimbursement(reimburse_id: str, status: str):
-    try:
-        manager_service.service_approve_deny_reimbursement(int(reimburse_id), status)
-        return f"Reimbursement id {int(reimburse_id)} has been {status}"
-    except UnavailableException as u:
-        exception_dictionary = {"Message": str(u)}
-        return jsonify(exception_dictionary)
 
 
 

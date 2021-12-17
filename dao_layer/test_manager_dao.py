@@ -5,14 +5,14 @@ manager_dao = PostgresManagerDAO()
 
 
 def test_login():
-    credentials = manager_dao.manager_login(2)
-    assert credentials[1] == ""
+    valid_login = manager_dao.manager_login(2, "acapella")
+    assert valid_login
 
 
 
 def test_approve_deny_reimbursement_happy():
-    approve_status = manager_dao.approve_deny_reimbursement(2, "Approved")
-    assert approve_status == "Approved"
+    approve_status = manager_dao.approve_deny_reimbursement(3, "Denied")
+    assert approve_status == "Denied"
 
 
 

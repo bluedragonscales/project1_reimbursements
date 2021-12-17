@@ -6,8 +6,9 @@ manager_dao = PostgresManagerDAO()
 manager_service = PostgresManagerService(manager_dao)
 
 
-def test_validate_login():
-    pass
+def test_validate_manager_login():
+    not_validated = manager_service.service_manager_login(2, "office1234")
+    assert not_validated == False
 
 
 def test_validate_approve_deny_reimbursement():

@@ -34,14 +34,21 @@ async function getReimburseData(){
   }
 };
 
+// let response = await fetch(url + url_attach, {headers: {'Content-Type': 'application/json'}, method: "POST", body: JSON.stringify({"employeeUsername": usernameInput.value, "employeePassword": passwordInput.value}) });
+//
 
 
-// TO SET REIMBURSEMENT STATUS
+
+
+
+// TO SET REIMBURSEMENT STATUS /// NOT WORKING
 async function setReimburseStatus(){
   let managerInput = document.getElementById("r-id");
   let statusInput = document.getElementById("reimburse-status");
-  const requestStatus = "http://127.0.0.1:5000/manager/reimbursement/" + managerInput.value + "/" + statusInput.value;
-  const response = await fetch(requestStatus);
+  let requestStatus = "http://127.0.0.1:5000/manager/reimbursement/";
+  let response = await fetch(requestStatus + managerInput.value, {headers:{'Content-Type': 'application/json'}, method: "PATCH", body:JSON.stringify({"status": statusInput.value}) });
+  let statusBody = await response.json();
+  console.log(statusBody);
 };
 let statusButton = document.getElementById("submit-status");
 statusButton.addEventListener("click", setReimburseStatus);

@@ -5,16 +5,15 @@ from database_connection import connection
 
 class PostgresManagerDAO(ManagerDAO):
 
-    def manager_login(self, manager_id: int):
-        sql = 'select password from "project1".manager where employee_id = %s'
-        sql2 = 'select username from "project1".manager where employee_id = %s'
+    def manager_login(self, manager_id: int, password: str):
+        sql = 'select password from "project1".manager where manager_id = %s'
         cursor = connection.cursor()
         cursor.execute(sql, [manager_id])
-        password = cursor.fetchone()[0]
-        cursor.execute(sql2, [manager_id])
-        username = cursor.fetchone()[0]
-        credentials = (username, password)
-        return credentials
+        validate = cursor.fetchone()[0]
+        if validate == password:
+            return True
+        else:
+            return False
 
 
     def approve_deny_reimbursement(self, reimburse_id: int, status: str):

@@ -5,7 +5,7 @@ from a_entities.reimbursement import Reimbursement
 class EmployeeService(ABC):
 
     @abstractmethod
-    def service_employee_login(self, employee_id: int):
+    def service_employee_login(self, employee_id: int, password: str):
         pass
 
     @abstractmethod

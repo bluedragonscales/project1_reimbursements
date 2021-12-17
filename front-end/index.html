@@ -9,10 +9,10 @@
 <body>
   <div class="employee">
     <form action="/action_page.php">
-      <button>Employee Login</button>
+      <button onclick="employeeLogin();">Employee Login</button>
       <div class="inputs">
-        <input type="text" placeholder="Username" name="username" class="employee-login">
-        <input type="text" placeholder="Password" name="psw" class="employee-psw">
+        <input type="number" placeholder="Employee Id" class="employee-login" id="emp-username">
+        <input type="text" placeholder="Password" class="employee-psw" id="emp-password">
       </div>
     </form>
   </div>
@@ -21,8 +21,8 @@
     <form action="/action_page.php">
       <button>Manager Login</button>
       <div class="inputs">
-        <input type="text" placeholder="Username" name="username" class="manager-login">
-        <input type="text" placeholder="Password" name="psw" class="manager-psw">
+        <input type="number" placeholder="Manager Id" class="manager-login" id="mana-username">
+        <input type="text" placeholder="Password" class="manager-psw" id="mana-password">
       </div>
     </form>
   </div>
@@ -31,7 +31,5 @@
     This browser does not support the audio file.
   </audio>
 </body>
-<script type="text/javascript">
-  // The script to log in goes here.
-</script>
+<script src="scripts/front-script.js"></script>
 </html>

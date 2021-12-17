@@ -10,17 +10,17 @@ class PostgresManagerService(ManagerService):
         self.manager_dao: PostgresManagerDAO = manager_dao
 
 
-    def service_login(self):
-        pass
+    def service_manager_login(self, manager_id: int, password: str):
+        validation = self.manager_dao.manager_login(manager_id, password)
+        if validation:
+            return True
+        else:
+            return False
 
 
     def service_approve_deny_reimbursement(self, reimburse_id: int, status: str):
-        reimbursement_list = self.manager_dao.view_all_reimbursement_requests()
-        for rb in reimbursement_list:
-            if reimburse_id == rb.reimburse_id:
-                return self.manager_dao.approve_deny_reimbursement(reimburse_id, status)
-            else:
-                raise UnavailableException("This reimbursement request does not exist.")
+        return self.manager_dao.approve_deny_reimbursement(reimburse_id, status)
+
 
 
     def service_view_all_reimbursement_requests(self) -> list[Reimbursement]:
