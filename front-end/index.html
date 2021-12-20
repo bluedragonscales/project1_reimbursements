@@ -1,4 +1,4 @@
-<!DOCTYPE>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -8,23 +8,20 @@
 
 <body>
   <div class="employee">
-    <form action="/action_page.php">
-      <button onclick="employeeLogin();">Employee Login</button>
-      <div class="inputs">
-        <input type="number" placeholder="Employee Id" class="employee-login" id="emp-username">
-        <input type="text" placeholder="Password" class="employee-psw" id="emp-password">
-      </div>
+    <button onclick="employeeLogin();" id="emp-button">Employee Login</button>
+    <div class="inputs">
+      <input type="number" placeholder="Employee Id" class="employee-login" id="emp-username">
+      <input type="text" placeholder="Password" class="employee-psw" id="emp-password">
+    </div>
     </form>
   </div>
 
   <div class="manager">
-    <form action="/action_page.php">
-      <button>Manager Login</button>
-      <div class="inputs">
-        <input type="number" placeholder="Manager Id" class="manager-login" id="mana-username">
-        <input type="text" placeholder="Password" class="manager-psw" id="mana-password">
-      </div>
-    </form>
+    <button onclick="managerLogin();" id="mana-button">Manager Login</button>
+    <div class="inputs">
+      <input type="number" placeholder="Manager Id" class="manager-login" id="mana-username">
+      <input type="text" placeholder="Password" class="manager-psw" id="mana-password">
+    </div>
   </div>
 
   <audio src="images/the-office-theme-song_01.mp3" controls>

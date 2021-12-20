@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Page 2</title>
+  </head>
+  <body>
+
+  </body>
+  <script type="text/javascript">
+    const result = sessionStorage.getItem("value");
+    const header = document.createElement("h1");
+    header.textContent = `You entered number ${result}`;
+    document.body.appendChild(header);
+  </script>
+</html>

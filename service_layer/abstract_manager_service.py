@@ -21,14 +21,5 @@ class ManagerService(ABC):
         pass
 
     @abstractmethod
-    def service_view_statistics(self):
-        pass
-    # View highest reimbursement request.
-    # View lowest reimbursement request.
-    # View total reimbursement value.
-    # View how much reimbursement each employee has asked for.
-    # View how much reimbursement has been approved.
-
-    @abstractmethod
-    def service_logout(self):
+    def service_view_statistics(self, statistic: str):
         pass

@@ -22,11 +22,7 @@ class ManagerDAO(ABC):
 
 
     @abstractmethod
-    def view_statistics(self):
+    def view_statistics(self, statistic: str):
         pass
-    # View highest reimbursement request.
-    # View lowest reimbursement request.
-    # View total reimbursement value.
-    # View how much reimbursement each employee has asked for.
-    # View how much reimbursement has been approved.
+
 

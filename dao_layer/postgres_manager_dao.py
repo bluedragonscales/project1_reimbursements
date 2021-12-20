@@ -50,6 +50,30 @@ class PostgresManagerDAO(ManagerDAO):
 
 
 
-    def view_statistics(self):
-        pass
-    # If one particular string, do that particular aggregate sql method to get the statistic.
+    def view_statistics(self, statistic: str):
+        cursor = connection.cursor()
+        if statistic == "Highest":    # To view the highest reimbursement request.
+            sql_high = 'select max(amount) from "project1".reimbursement'
+            cursor.execute(sql_high)
+            highest_reimbursement = cursor.fetchone()[0]
+            return highest_reimbursement
+        elif statistic == "Lowest":  # To view the lowest reimbursement request.
+            sql_low = 'select min(amount) from "project1".reimbursement'
+            cursor.execute(sql_low)
+            lowest_reimbursement = cursor.fetchone()[0]
+            return lowest_reimbursement
+        elif statistic == "Average":   # To view the average of the reimbursement amounts that were approved.
+            sql_avg = 'select avg(amount) from "project1".reimbursement = Approved'
+            cursor.execute(sql_avg)
+            average = cursor.fetchone()[0]
+            return average
+        elif statistic == "Total":   # To view the total amount of reimbursements.
+            sql_total = 'select sum(amount) from "project1".reimbursement where status = Approved'
+            cursor.execute(sql_total)
+            total = cursor.fetchone()[0]
+            return total
+        elif statistic == "Count":   # To view how many reimbursements have been requested no matter the status.
+            sql_count = 'select count(amount) from "project1".reimbursement'
+            cursor.execute(sql_count)
+            count = cursor.fetchone()[0]
+            return count

@@ -29,8 +29,5 @@ class PostgresManagerService(ManagerService):
     def service_view_reimburse_requests_per_status(self, status: str) -> list[Reimbursement]:
         return self.manager_dao.view_reimburse_requests_per_status(status)
 
-    def service_view_statistics(self):
-        pass
-
-    def service_logout(self):
-        pass
+    def service_view_statistics(self, statistic: str):
+        return self.manager_dao.view_statistics(statistic)

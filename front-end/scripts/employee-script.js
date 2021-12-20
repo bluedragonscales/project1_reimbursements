@@ -14,6 +14,7 @@ function openTab(evt, tabName) {
 
 
 
+
 // This script connects the server to the website.
 // Putting a reference to the table inside of a JS variable.
 const table = document.getElementById("reimburse-table");
@@ -26,9 +27,9 @@ button.addEventListener("click", getReimburseData);
 async function getReimburseData(){
   tableBody.innerHTML = ``;
   // Adding a reference to the route.
-  const viewReimburseRoute = "http://127.0.0.1:5000/employee/reimbursement/4";
+  const viewReimburseRoute = "http://127.0.0.1:5000/employee/reimbursement/";
   // Fetching the information from the route.
-  let response = await fetch(viewReimburseRoute);
+  let response = await fetch(viewReimburseRoute + sessionStorage.getItem("valueEmp"));
   if(response.status == 200){
     // Storing a reference to the json inside "rBody".
     let body = await response.json();
@@ -49,3 +50,8 @@ function populateReimburseData(jsonBody){
     tableBody.appendChild(tableRow);
   };
 };
+
+
+
+
+//This function will let an employee create a reimbursement request.

@@ -16,8 +16,3 @@ def test_validate_approve_deny_reimbursement():
         manager_service.service_approve_deny_reimbursement(20, "Approved")
     except UnavailableException as u:
         assert str(u) == "This reimbursement request does not exist."
-
-
-
-def service_view_statistics(self):
-    pass

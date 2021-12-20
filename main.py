@@ -20,15 +20,15 @@ manager_service = PostgresManagerService(manager_dao)
 
 
 # These are the routes for the employee side.
-@app.post("/employee/login/<employee_id>")
-def employee_login(employee_id: str):
+@app.post("/employee/login")
+def employee_login():
     login_body = request.get_json()
-    username = int(employee_id)
+    username = login_body["employeeId"]
     password = login_body["password"]
-    validated = employee_service.service_employee_login(username, password)
+    validated = employee_service.service_employee_login(int(username), password)
     if validated:
         good_message = {"Validated" : True}
-        return jsonify(good_message)
+        return jsonify(good_message), 200
     else:
         bad_message = {"Validated" : False}
         return jsonify(bad_message)
@@ -70,12 +70,12 @@ def view_reimbursement_per_employee(employee_id: str):
 
 
 # These are the routes for the manager side.
-@app.post("/manager/login/<manager_id>")
-def employee_login(manager_id: str):
+@app.post("/manager/login")
+def manager_login():
     login_body = request.get_json()
-    username = int(manager_id)
+    username = login_body["managerId"]
     password = login_body["password"]
-    validated = manager_service.service_manager_login(username, password)
+    validated = manager_service.service_manager_login(int(username), password)
     if validated:
         good_message = {"Validated" : True}
         return jsonify(good_message)
@@ -119,6 +119,12 @@ def view_reimbursement_per_status(status: str):
         rb_status_as_dictionary.append(dictionary_rb_status)
     return jsonify(rb_status_as_dictionary)
 
+
+
+# route to view statistics
+@app.get("/manager/statistics")
+def view_reimbursement_statistics():
+    pass
 
 
 
