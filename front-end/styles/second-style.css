@@ -1,6 +1,5 @@
 * {
   margin: 0;
-  /* border: red solid 2px; */
   box-sizing: border-box;
 }
 
@@ -86,6 +85,19 @@ p {
 
 .r-stats > select {
   margin: 2rem 0;
+}
+
+#status-message {
+  color: red;
+  font-weight: 300;
+  text-align: center;
+}
+
+#view-stats {
+  margin: 0.5rem 25%;
+  color: red;
+  font-weight: 300;
+  text-align: center;
 }
 
 h2 {

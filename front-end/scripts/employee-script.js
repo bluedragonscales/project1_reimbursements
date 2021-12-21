@@ -3,6 +3,7 @@ function openTab(evt, tabName) {
   let tabcontent = document.getElementsByClassName("tabcontent");
   for (let i = 0; i < tabcontent.length; i++) {
     tabcontent[i].style.display = "none";
+    document.getElementById("request-created").textContent = ``;
   };
   let tablink = document.getElementsByClassName("tablink");
   for (let i = 0; i < tablink.length; i++) {
@@ -55,7 +56,7 @@ function populateReimburseData(jsonBody){
 
 
 
-// TO CREATE A NEW REIMBURSEMENT. NOT WORKING
+// TO CREATE A NEW REIMBURSEMENT.
 async function createReimbursement(){
   let requestLabel = document.getElementById("purpose");
   let amount = document.getElementById("amount");
@@ -66,6 +67,8 @@ async function createReimbursement(){
   let requestMessage = document.getElementById("request-created");
   if(response.status == 200){
     let createBody = await response.json();
+    requestLabel.value = ``;
+    amount.value = ``;
     requestMessage.textContent = `Your request has been submitted.`;
   } else {
     requestMessage.textContent = `Your request to submit has failed.`;

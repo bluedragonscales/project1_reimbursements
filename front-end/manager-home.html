@@ -22,12 +22,11 @@
 
     <h2>Welcome</h2>
     <p>Welcome to your manager portal for reimbursements.</p>
-    <p>Click on the tab "Submit Reimbursement Request" to submit a reimbursement. Click on the tab "View Reimbursement Requests" to view all reimbursements requests.</p>
+    <p>Click on the tab "Submit Reimbursement Status" to change the status of a reimbursement request. Click on the tab "View Reimbursement Requests" to view all reimbursements requests. Click on the tab "View Reimbursement Statistics" to view different statistics on the reimbursement requests.</p>
 
 
     <section id="status-r" class="tabcontent">
       <h2>Change Reimbursement Status</h2>
-      <!-- <form method="post"> -->
         <input type="number" placeholder="Reimbursement Id" id="r-id">
         <select name="status" id="reimburse-status">
           <option value="Pending">Pending</option>
@@ -35,7 +34,7 @@
           <option value="Denied">Denied</option>
         </select>
         <input type="submit" id="submit-status">
-      <!-- </form> -->
+        <h3 id="status-message"></h3>
     </section>
 
 
@@ -69,8 +68,8 @@
           <option value="Count">Count</option>
         </select>
         <input type="submit" id="submit-stats" onclick="viewStatistics();">
-        <h3 id="view-stats"></h3>
       </div>
+      <h3 id="view-stats"></h3>
     </section>
 
 

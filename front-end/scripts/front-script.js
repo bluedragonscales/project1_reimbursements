@@ -29,7 +29,7 @@ async function employeeLogin(){
 async function managerLogin(){
   let response = await fetch("http://127.0.0.1:5000/manager/login", {method:["POST"],
   headers: {"Content-Type":"application/json"},
-  body: JSON.stringify({"managerId":mUsername.value, "password":mPassword.value}) });
+  body: JSON.stringify({"managerId": mUsername.value, "password": mPassword.value}) });
   if(response.status == 200){
     let body = await response.json();
     console.log(body);

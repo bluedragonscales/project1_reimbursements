@@ -3,6 +3,8 @@ function openTab(evt, tabName) {
   let tabcontent = document.getElementsByClassName("tabcontent");
   for (let i = 0; i < tabcontent.length; i++) {
     tabcontent[i].style.display = "none";
+    document.getElementById("status-message").textContent = ``;
+    document.getElementById("view-stats").textContent = ``;
   };
   let tablink = document.getElementsByClassName("tablink");
   for (let i = 0; i < tablink.length; i++) {
@@ -60,8 +62,15 @@ async function setReimburseStatus(){
   let statusInput = document.getElementById("reimburse-status");
   let requestStatus = "http://127.0.0.1:5000/manager/reimbursement/";
   let response = await fetch(requestStatus + managerInput.value, {headers:{'Content-Type': 'application/json'}, method: "PATCH", body:JSON.stringify({"status": statusInput.value}) });
-  let statusBody = await response.json();
-  console.log(statusBody);
+  let statusMessage = document.getElementById("status-message");
+  if(response.status == 200){
+    let statusBody = await response.json();
+    statusMessage.textContent = `Reimbursement ID ${managerInput.value} has been ${statusInput.value}`;
+    managerInput.value = ``;
+    statusInput.value = ``;
+  } else {
+    statusMessage.textContent = "Failed to update reimbursement status.";
+  };
 };
 let statusButton = document.getElementById("submit-status");
 statusButton.addEventListener("click", setReimburseStatus);
@@ -71,21 +80,21 @@ statusButton.addEventListener("click", setReimburseStatus);
 
 
 // TO VIEW REIMBURSEMENT STATISTICS
+let statView = document.getElementById("select-statistic");
 async function viewStatistics(){
-  let statView = document.getElementById("select-statistic");
   let viewStatsRoute = "http://127.0.0.1:5000/manager/statistics";
   let response = await fetch(viewStatsRoute, {headers:{"Content-Type":"application/json"}, method:["POST"], body:JSON.stringify({"statistic": statView.value}) });
   if(response.status == 200){
     let statBody = await response.json();
     populateStats(statBody);
+    statView.value = ``;
   } else {
     alert("Could not populate statistics!")
   };
 };
 
 function populateStats(jsonStats){
-  let statHeading = document.getElementById("view-stats");
-  statHeading.textContent = `${jsonStats}`;
+  let statMessage = document.getElementById("view-stats").textContent = `The ${statView.value} of all the reimbursement requests is $${jsonStats}.`;
 };
 
 
