@@ -1,4 +1,4 @@
-// This script is just to make the tabs work.
+// TO MAKE THE TABS WORK
 function openTab(evt, tabName) {
   let tabcontent = document.getElementsByClassName("tabcontent");
   for (let i = 0; i < tabcontent.length; i++) {
@@ -15,7 +15,7 @@ function openTab(evt, tabName) {
 
 
 
-// This script connects the server to the website.
+// TO VIEW REIMBURSMENT DATA FOR THAT EMPLOYEE THAT LOGGED IN
 // Putting a reference to the table inside of a JS variable.
 const table = document.getElementById("reimburse-table");
 const tableBody = document.getElementById("r-body");
@@ -54,4 +54,28 @@ function populateReimburseData(jsonBody){
 
 
 
-//This function will let an employee create a reimbursement request.
+
+// TO CREATE A NEW REIMBURSEMENT. NOT WORKING
+async function createReimbursement(){
+  let requestLabel = document.getElementById("purpose");
+  let amount = document.getElementById("amount");
+  const submitReimburseRoute = "http://127.0.0.1:5000/employee/reimbursement";
+  let response = await fetch(submitReimburseRoute, {headers:{'Content-Type': 'application/json'},
+                            method:["POST"], body:JSON.stringify({"reimburseId": 0,"employeeId": sessionStorage.getItem("valueEmp"), "requestLabel": requestLabel.value,
+                          "amount": amount.value, "status": ""}) });
+  let requestMessage = document.getElementById("request-created");
+  if(response.status == 200){
+    let createBody = await response.json();
+    requestMessage.textContent = `Your request has been submitted.`;
+  } else {
+    requestMessage.textContent = `Your request to submit has failed.`;
+  }
+};
+
+
+
+
+function logout(){
+  sessionStorage.clear();
+  window.location.href = "index.html";
+};

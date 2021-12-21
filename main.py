@@ -39,11 +39,11 @@ def employee_login():
 def submit_reimbursement():
     try:
         rb_data = request.get_json()
-        new_reimbursement = Reimbursement(rb_data["reimburseId"],
+        new_reimbursement = Reimbursement(int(rb_data["reimburseId"]),   # default
                                           rb_data["employeeId"],
                                           rb_data["requestLabel"],
-                                          rb_data["amount"],
-                                          rb_data["status"])
+                                          float(rb_data["amount"]),
+                                          rb_data["status"])   # default
         rb_to_return = employee_service.service_submit_reimbursement(new_reimbursement)
         rb_as_dictionary = rb_to_return.reimbursement_dictionary()
         rb_as_json = jsonify(rb_as_dictionary)
@@ -78,7 +78,7 @@ def manager_login():
     validated = manager_service.service_manager_login(int(username), password)
     if validated:
         good_message = {"Validated" : True}
-        return jsonify(good_message)
+        return jsonify(good_message), 200
     else:
         bad_message = {"Validated" : False}
         return jsonify(bad_message)
@@ -92,7 +92,7 @@ def approve_deny_reimbursement(reimburse_id: str):
     status_id = int(reimburse_id)
     status_to_return = manager_service.service_approve_deny_reimbursement(status_id, new_status)
     status_as_json = jsonify(status_to_return)
-    return status_as_json
+    return status_as_json, 200
 
 
 
@@ -117,14 +117,20 @@ def view_reimbursement_per_status(status: str):
     for rb_status in reimburse_per_status:
         dictionary_rb_status = rb_status.reimbursement_dictionary()
         rb_status_as_dictionary.append(dictionary_rb_status)
-    return jsonify(rb_status_as_dictionary)
+    return jsonify(rb_status_as_dictionary), 200
 
 
 
 # route to view statistics
-@app.get("/manager/statistics")
+@app.post("/manager/statistics")
 def view_reimbursement_statistics():
-    pass
+    stats_data = request.get_json()
+    statistic_string = stats_data["statistic"]
+    stats_to_return = manager_service.service_view_statistics(statistic_string)
+    stats_as_json = jsonify(stats_to_return)
+    return stats_as_json, 200
+
+
 
 
 

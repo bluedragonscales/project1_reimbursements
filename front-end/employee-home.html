@@ -26,13 +26,10 @@
     <section id="request-r" class="tabcontent">
       <h2>Request Reimbursement Form</h2>
       <div class="request-reimbursement">
-        <form class="" action="index.html" method="post">
-          <input type="number" placeholder="Employee Id">
-          <input type="text" placeholder="Request purpose">
-          <input type="number" placeholder="Amount">
-          <input type="number" placeholder="Manager Id">
-          <input type="submit" class="submit-button">
-        </form>
+        <input type="text" placeholder="Request purpose" id="purpose">
+        <input type="number" placeholder="Amount" id="amount">
+        <input type="submit" class="submit-button" onclick="createReimbursement();">
+        <h3 id="request-created"></h3>
       </div>
     </section>
 
@@ -56,7 +53,7 @@
     </section>
 
     <footer>
-      <button>Log Out</button>
+      <button onclick="logout();">Log Out</button>
     </footer>
 
   </body>

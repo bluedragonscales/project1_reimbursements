@@ -15,7 +15,8 @@ async function employeeLogin(){
       sessionStorage.setItem("valueEmp", eUsername.value);
       window.location.href = "employee-home.html";
     } else {
-      alert("Login credentials not validated.");
+      let errorMessage = document.getElementById("error-message");
+      errorMessage.textContent = "Your credentials could not be validated. Please make sure your Employee ID and password are correct.";
     };
   } else {
     alert("Login credentials not validated.");
@@ -35,7 +36,8 @@ async function managerLogin(){
     if(body.Validated == true){
       window.location.href = "manager-home.html";
     } else {
-      alert("Login credentials not validated.");
+      let errorMessage = document.getElementById("error-message");
+      errorMessage.textContent = "Your credentials could not be validated. Please make sure your Manager ID and password are correct.";
     };
   } else {
     alert("Login credentials not validated.");

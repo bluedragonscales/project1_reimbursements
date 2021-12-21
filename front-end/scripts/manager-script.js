@@ -14,7 +14,7 @@ function openTab(evt, tabName) {
 
 
 
-// TO CONNECT THE SERVER TO THE WEBSITE
+// TO GET ALL THE REIMBURSEMENT DATA
 // The function to send a request and create a promise while this loads.
 async function getReimburseData(){
   tableBody.innerHTML = ``;
@@ -34,25 +34,6 @@ async function getReimburseData(){
   }
 };
 
-// let response = await fetch(url + url_attach, {headers: {'Content-Type': 'application/json'}, method: "POST", body: JSON.stringify({"employeeUsername": usernameInput.value, "employeePassword": passwordInput.value}) });
-//
-
-
-
-
-
-// TO SET REIMBURSEMENT STATUS /// NOT WORKING
-async function setReimburseStatus(){
-  let managerInput = document.getElementById("r-id");
-  let statusInput = document.getElementById("reimburse-status");
-  let requestStatus = "http://127.0.0.1:5000/manager/reimbursement/";
-  let response = await fetch(requestStatus + managerInput.value, {headers:{'Content-Type': 'application/json'}, method: "PATCH", body:JSON.stringify({"status": statusInput.value}) });
-  let statusBody = await response.json();
-  console.log(statusBody);
-};
-let statusButton = document.getElementById("submit-status");
-statusButton.addEventListener("click", setReimburseStatus);
-
 
 // TO VIEW ALL REIMBURSEMENTS
 // Putting a reference to the table inside of a JS variable.
@@ -68,4 +49,50 @@ function populateReimburseData(jsonBody){
     tableRow.innerHTML = `<td>${rb.reimburseId}</td><td>${rb.employeeId}</td><td>${rb.requestLabel}</td><td>${rb.amount}</td><td>${rb.status}</td>`;
     tableBody.appendChild(tableRow);
   };
+};
+
+
+
+
+// TO SET REIMBURSEMENT STATUS
+async function setReimburseStatus(){
+  let managerInput = document.getElementById("r-id");
+  let statusInput = document.getElementById("reimburse-status");
+  let requestStatus = "http://127.0.0.1:5000/manager/reimbursement/";
+  let response = await fetch(requestStatus + managerInput.value, {headers:{'Content-Type': 'application/json'}, method: "PATCH", body:JSON.stringify({"status": statusInput.value}) });
+  let statusBody = await response.json();
+  console.log(statusBody);
+};
+let statusButton = document.getElementById("submit-status");
+statusButton.addEventListener("click", setReimburseStatus);
+
+
+
+
+
+// TO VIEW REIMBURSEMENT STATISTICS
+async function viewStatistics(){
+  let statView = document.getElementById("select-statistic");
+  let viewStatsRoute = "http://127.0.0.1:5000/manager/statistics";
+  let response = await fetch(viewStatsRoute, {headers:{"Content-Type":"application/json"}, method:["POST"], body:JSON.stringify({"statistic": statView.value}) });
+  if(response.status == 200){
+    let statBody = await response.json();
+    populateStats(statBody);
+  } else {
+    alert("Could not populate statistics!")
+  };
+};
+
+function populateStats(jsonStats){
+  let statHeading = document.getElementById("view-stats");
+  statHeading.textContent = `${jsonStats}`;
+};
+
+
+
+
+// TO LOGOUT
+function logout(){
+  sessionStorage.clear();
+  window.location.href = "index.html";
 };

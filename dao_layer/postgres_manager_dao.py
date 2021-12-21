@@ -63,12 +63,12 @@ class PostgresManagerDAO(ManagerDAO):
             lowest_reimbursement = cursor.fetchone()[0]
             return lowest_reimbursement
         elif statistic == "Average":   # To view the average of the reimbursement amounts that were approved.
-            sql_avg = 'select avg(amount) from "project1".reimbursement = Approved'
+            sql_avg = 'select avg(amount) from "project1".reimbursement'
             cursor.execute(sql_avg)
             average = cursor.fetchone()[0]
             return average
         elif statistic == "Total":   # To view the total amount of reimbursements.
-            sql_total = 'select sum(amount) from "project1".reimbursement where status = Approved'
+            sql_total = 'select sum(amount) from "project1".reimbursement'
             cursor.execute(sql_total)
             total = cursor.fetchone()[0]
             return total

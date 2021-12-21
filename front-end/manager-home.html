@@ -14,8 +14,9 @@
         </audio>
       </div>
       <div>
-        <button id="status" class="tablink" onclick="openTab(event, 'status-r')">Submit Reimbursement Status</button>
-        <button id="view" class="tablink" onclick="openTab(event, 'view-r')">View Reimbursement Requests</button>
+        <button id="status" class="tablink" onclick="openTab(event, 'status-r');">Submit Reimbursement Status</button>
+        <button id="view" class="tablink" onclick="openTab(event, 'view-r');">View Reimbursement Requests</button>
+        <button id="stats" class="tablink" onclick="openTab(event, 'statistics');">View Reimbursement Satistics</button>
       </div>
     </header>
 
@@ -55,8 +56,26 @@
       </div>
     </section>
 
+
+    <section id="statistics" class="tabcontent">
+      <h2>View Reimbursement Statistics</h2>
+      <div class="r-stats">
+        <select id="select-statistic">
+          <option value=""></option>
+          <option value="Highest">Highest</option>
+          <option value="Lowest">Lowest</option>
+          <option value="Average">Average</option>
+          <option value="Total">Total</option>
+          <option value="Count">Count</option>
+        </select>
+        <input type="submit" id="submit-stats" onclick="viewStatistics();">
+        <h3 id="view-stats"></h3>
+      </div>
+    </section>
+
+
     <footer>
-      <button>Log Out</button>
+      <button onclick="logout();">Log Out</button>
     </footer>
 
   </body>
