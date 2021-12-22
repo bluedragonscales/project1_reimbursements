@@ -2,6 +2,9 @@ import time
 from behave import Given, When, Then
 
 # TO LOG IN
+from selenium.webdriver.support.select import Select
+
+
 @Given(u'the manager is on the login page.')
 def get_manager_login_page(context):
     context.driver.get("file:///C:/Users/kckar/Desktop/Revature/project1_reimbursements/front-end/index.html")
@@ -92,8 +95,9 @@ def step_impl(context):
 
 @When(u'the manager selects the Count option from the dropdown.')
 def step_impl(context):
-    context.employee_page.select_statistic_option().send_keys("Count")
-
+    context.employee_page.select_statistic_option().click()
+    # select = Select(context.employee_page.select_statistic_option())
+    # select.select_by_visible_text("Count")
 
 @When(u'the manager clicks the statistics submit button.')
 def step_impl(context):
