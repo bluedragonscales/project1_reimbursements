@@ -48,7 +48,7 @@ button.addEventListener("click", getReimburseData);
 function populateReimburseData(jsonBody){
   for(let rb of jsonBody){
     let tableRow = document.createElement("tr");
-    tableRow.innerHTML = `<td>${rb.reimburseId}</td><td>${rb.employeeId}</td><td>${rb.requestLabel}</td><td>${rb.amount}</td><td>${rb.status}</td>`;
+    tableRow.innerHTML = `<td>${rb.reimburseId}</td><td>${rb.employeeId}</td><td>${rb.requestLabel}</td><td>${rb.amount}</td><td>${rb.status}</td><td>${sessionStorage.getItem("reason")}</td>`;
     tableBody.appendChild(tableRow);
   };
 };
@@ -60,14 +60,17 @@ function populateReimburseData(jsonBody){
 async function setReimburseStatus(){
   let managerInput = document.getElementById("r-id");
   let statusInput = document.getElementById("reimburse-status");
+  let statusReason = document.getElementById("status-reason");
   let requestStatus = "http://127.0.0.1:5000/manager/reimbursement/";
   let response = await fetch(requestStatus + managerInput.value, {headers:{'Content-Type': 'application/json'}, method: "PATCH", body:JSON.stringify({"status": statusInput.value}) });
   let statusMessage = document.getElementById("status-message");
   if(response.status == 200){
     let statusBody = await response.json();
+    sessionStorage.setItem("reason", statusReason.value);
     statusMessage.textContent = `Reimbursement ID ${managerInput.value} has been ${statusInput.value}`;
     managerInput.value = ``;
     statusInput.value = ``;
+    statusReason.value = ``;
   } else {
     statusMessage.textContent = "Failed to update reimbursement status.";
   };

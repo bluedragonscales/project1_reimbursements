@@ -15,7 +15,6 @@ def test_approve_deny_reimbursement_happy():
     assert approve_status == "Denied"
 
 
-
 def test_view_all_reimbursement_requests_happy():
     all_reimbursements = manager_dao.view_all_reimbursement_requests()
     assert len(all_reimbursements) > 0

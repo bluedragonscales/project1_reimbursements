@@ -22,12 +22,13 @@ class PostgresManagerService(ManagerService):
         return self.manager_dao.approve_deny_reimbursement(reimburse_id, status)
 
 
-
     def service_view_all_reimbursement_requests(self) -> list[Reimbursement]:
         return self.manager_dao.view_all_reimbursement_requests()
 
+
     def service_view_reimburse_requests_per_status(self, status: str) -> list[Reimbursement]:
         return self.manager_dao.view_reimburse_requests_per_status(status)
+
 
     def service_view_statistics(self, statistic: str):
         return self.manager_dao.view_statistics(statistic)

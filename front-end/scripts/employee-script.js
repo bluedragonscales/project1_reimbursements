@@ -47,7 +47,7 @@ async function getReimburseData(){
 function populateReimburseData(jsonBody){
   for(let rb of jsonBody){
     let tableRow = document.createElement("tr");
-    tableRow.innerHTML = `<td>${rb.reimburseId}</td><td>${rb.employeeId}</td><td>${rb.requestLabel}</td><td>${rb.amount}</td><td>${rb.status}</td>`;
+    tableRow.innerHTML = `<td>${rb.reimburseId}</td><td>${rb.employeeId}</td><td>${rb.requestLabel}</td><td>${rb.amount}</td><td>${rb.status}</td><td>${sessionStorage.getItem("reason")}</td>`;
     tableBody.appendChild(tableRow);
   };
 };
@@ -66,10 +66,14 @@ async function createReimbursement(){
                           "amount": amount.value, "status": ""}) });
   let requestMessage = document.getElementById("request-created");
   if(response.status == 200){
-    let createBody = await response.json();
-    requestLabel.value = ``;
-    amount.value = ``;
-    requestMessage.textContent = `Your request has been submitted.`;
+    if(amount > 0){
+      let createBody = await response.json();
+      requestLabel.value = ``;
+      amount.value = ``;
+      requestMessage.textContent = `Your request has been submitted.`;
+    } else {
+      requestMessage.textContent = `Your request to submit has failed.`;
+    };
   } else {
     requestMessage.textContent = `Your request to submit has failed.`;
   }

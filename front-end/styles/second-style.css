@@ -58,7 +58,21 @@ p {
   border: #18BFF3 solid 3px;
 }
 
-.submit-button, #submit-stats {
+.change-status {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.change-status > input, select {
+  margin: 1rem;
+  padding: 4px 10px;
+  border: #18BFF3 solid 3px;
+}
+
+.submit-button, #submit-stats, #submit-status {
   color: white;
   background-color: #18BFF3;
   cursor: pointer;

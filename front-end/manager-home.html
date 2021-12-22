@@ -26,15 +26,19 @@
 
 
     <section id="status-r" class="tabcontent">
-      <h2>Change Reimbursement Status</h2>
-        <input type="number" placeholder="Reimbursement Id" id="r-id">
-        <select name="status" id="reimburse-status">
-          <option value="Pending">Pending</option>
-          <option value="Approved">Approved</option>
-          <option value="Denied">Denied</option>
-        </select>
-        <input type="submit" id="submit-status">
-        <h3 id="status-message"></h3>
+      <div class="change-status">
+        <h2>Change Reimbursement Status</h2>
+          <input type="number" placeholder="Reimbursement Id" id="r-id">
+          <select name="status" id="reimburse-status">
+            <option value=""></option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Denied">Denied</option>
+          </select>
+          <input type="text" placeholder="Reason for status change" maxlength="200" id="status-reason">
+          <input type="submit" id="submit-status">
+          <h3 id="status-message"></h3>
+        </div>
     </section>
 
 
@@ -48,6 +52,7 @@
             <th>Request Purpose</th>
             <th>Amount</th>
             <th>Status</th>
+            <th>Reason</th>
           </thead>
           <tbody id="r-body">
           </tbody>

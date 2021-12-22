@@ -26,8 +26,8 @@
     <section id="request-r" class="tabcontent">
       <h2>Request Reimbursement Form</h2>
       <div class="request-reimbursement">
-        <input type="text" placeholder="Request purpose" id="purpose">
-        <input type="number" placeholder="Amount" id="amount">
+        <input type="text" placeholder="Request purpose" id="purpose" maxlength="200">
+        <input type="number" placeholder="Amount" id="amount" min="1">
         <input type="submit" class="submit-button" onclick="createReimbursement();">
         <h3 id="request-created"></h3>
       </div>
@@ -45,6 +45,7 @@
             <th>Request Purpose</th>
             <th>Amount</th>
             <th>Status</th>
+            <th>Reason</th>
           </thead>
           <tbody id="r-body">
           </tbody>
