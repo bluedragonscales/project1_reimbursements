@@ -71,9 +71,9 @@ def request_submitted(context):
 
 
 # VIEWING REIMBURSEMENT STATISTICS
-@Given(u'the manager is on the manager home page.')
-def get_manager_home_page(context):
-    context.driver.get("file:///C:/Users/kckar/Desktop/Revature/project1_reimbursements/front-end/manager-home.html")
+# @Given(u'the manager is on the manager home page.')
+# def get_manager_home_page(context):
+#     context.driver.get("file:///C:/Users/kckar/Desktop/Revature/project1_reimbursements/front-end/manager-home.html")
 
 
 @When(u'the manager clicks the view reimbursement statistics tab.')
@@ -100,9 +100,9 @@ def reimburse_statistics_are_shown(context):
 
 
 # LOGGING OUT
-@Given(u'the manager is on the manager home page.')
-def get_manager_home_page(context):
-    context.driver.get("file:///C:/Users/kckar/Desktop/Revature/project1_reimbursements/front-end/manager-home.html")
+# @Given(u'the manager is on the manager home page.')
+# def get_manager_home_page(context):
+#     context.driver.get("file:///C:/Users/kckar/Desktop/Revature/project1_reimbursements/front-end/manager-home.html")
 
 @When(u'the manager clicks on the logout button.')
 def select_logout_button(context):
