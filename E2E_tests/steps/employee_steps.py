@@ -1,3 +1,4 @@
+import time
 from behave import Given, When, Then
 
 
@@ -22,8 +23,9 @@ def select_login_button(context):
     context.employee_page.click_login_button().click()
 
 
-@Then(u'the employee is redirected to the employee home page')
+@Then(u'the employee is redirected to the Employee Home page')
 def get_employee_home_page(context):
+    time.sleep(.5)
     title = context.driver.title
     assert title == "Employee Home"
 
@@ -57,7 +59,7 @@ def select_submit_reimbursement_button(context):
     context.employee_page.click_submit_reimbursement_button().click()
 
 
-@Then(u'a new reimbursement request has been submitted and the employee is on the home page')
+@Then(u'a new reimbursement request has been submitted and the employee is on the Employee Home page')
 def request_submitted(context):
     title = context.driver.title
     assert title == "Employee Home"
@@ -73,9 +75,10 @@ def select_view_reimbursements_tab(context):
     context.employee_page.click_view_reimbursement_tab().click()
 
 
-@Then(u'the reimbursements are shown on the employee home page')
+@Then(u'the reimbursements are shown and the employee is on the Employee Home page')
 def reimbursements_are_shown(context):
-    assert context.driver.title == "Employee Home"
+    title = context.driver.title
+    assert title == "Employee Home"
 
 
 
@@ -88,7 +91,6 @@ def select_logout_button(context):
     context.employee_page.click_logout_button().click()
 
 
-@Then(u'the employee will be redirected to the index home page')
+@Then(u'the employee will be redirected to the index Home page')
 def employee_is_logged_out(context):
-    title = context.driver.title
-    assert title == "Home"
+    assert context.driver.title == "Home"
