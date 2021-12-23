@@ -52,7 +52,7 @@ def fill_reimburse_id_input(context):
 
 @When(u'the manager selects Denied from the drop down options.')
 def select_option_dropdown(context):
-    context.employee_page.select_option_input().send_keys("Denied")
+    context.employee_page.select_option_input().click()
 
 
 @When(u'the manager inputs not office supplies into the reason input.')
@@ -73,6 +73,7 @@ def show_status_result_on_manager_page(context):
 
 
 
+
 # # TO VIEW ALL REIMBURSEMENT REQUESTS
 @When(u'the manager clicks on the view all reimbursements tab.')
 def select_view_all_reimburse_tab(context):
@@ -80,6 +81,7 @@ def select_view_all_reimburse_tab(context):
 
 @Then(u'the reimbursements will show and the manager will be on the Manager Home page.')
 def view_reimburse_on_manager_page(context):
+    time.sleep(.5)
     title = context.driver.title
     assert title == "Manager Home"
 
@@ -94,18 +96,18 @@ def step_impl(context):
 
 
 @When(u'the manager selects the Count option from the dropdown.')
-def step_impl(context):
+def click_statistic_option(context):
     context.employee_page.select_statistic_option().click()
-    # select = Select(context.employee_page.select_statistic_option())
-    # select.select_by_visible_text("Count")
+
 
 @When(u'the manager clicks the statistics submit button.')
-def step_impl(context):
+def select_statistics_submit_button(context):
     context.employee_page.click_statistic_submit_button().click()
 
 
 @Then(u'the statistics are shown and the manager is on the Manager Home page.')
-def step_impl(context):
+def show_statistics_on_manager_page(context):
+    time.sleep(.5)
     title = context.driver.title
     assert title == "Manager Home"
 
@@ -115,10 +117,10 @@ def step_impl(context):
 
 # TO LOG OUT
 @When(u'the manager clicks on the logout button.')
-def step_impl(context):
+def select_manager_logout_button(context):
     context.employee_page.click_manager_logout_button().click()
 
 
 @Then(u'the manager is redirected to the Home page.')
-def step_impl(context):
+def redirect_manager_to_home(context):
     assert context.driver.title == "Home"

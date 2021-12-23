@@ -105,6 +105,8 @@ class ReimbursementPage:
     # This method selects the reason input box.
     def select_reason_input(self):
         element: WebElement = self.driver.find_element(By.ID, "status-reason")
+        return element
+
 
     # This method selects the submit reimbursement button.
     def click_submit_status_button(self):

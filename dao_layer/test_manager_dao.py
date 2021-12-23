@@ -29,4 +29,4 @@ def test_view_reimburse_requests_per_status_happy():
 
 def test_view_statistics():
     count_reimbursements = manager_dao.view_statistics("Count")
-    assert count_reimbursements == 5
+    assert count_reimbursements > 15

@@ -13,14 +13,14 @@ Feature: using the manager home page in the reimbursement system.
     Then the reimbursements will show and the manager will be on the Manager Home page.
 
 
-#  Scenario: As a manager I want to approve or deny reimbursement requests if they are legitimate or not.
-#    Given the manager is on the manager home page.
-#    When the manager clicks on the submit reimbursement status tab.
-#    When the manager inputs 3 in the reimbursement id input.
-#    When the manager selects Denied from the drop down options.
-#    When the manager inputs good office supplies into the reason input.
-#    When the manager clicks the submit status button.
-#    Then the status will be submitted and the manager will be on the Manager Home page.
+  Scenario: As a manager I want to approve or deny reimbursement requests if they are legitimate or not.
+    Given the manager is on the manager home page.
+    When the manager clicks on the submit reimbursement status tab.
+    When the manager inputs 3 in the reimbursement id input.
+    When the manager selects Denied from the drop down options.
+    When the manager inputs not office supplies into the reason input.
+    When the manager clicks the submit status button.
+    Then the status will be submitted and the manager will be on the Manager Home page.
 
   Scenario: As a manager I want to view reimbursement statistics so that I can keep track of employee activities.
     Given the manager is on the manager home page.
