@@ -1,7 +1,5 @@
 const eUsername = document.getElementById("emp-username");
 const ePassword = document.getElementById("emp-password");
-const mUsername = document.getElementById("mana-username");
-const mPassword = document.getElementById("mana-password");
 
 // EMPLOYEE LOGIN
 async function employeeLogin(){
@@ -10,7 +8,7 @@ async function employeeLogin(){
   body: JSON.stringify({"employeeId":eUsername.value, "password":ePassword.value}) });
   if(response.status == 200){
     let body = await response.json();
-    console.log(body);
+    // console.log(body);
     if(body.Validated == true){
       sessionStorage.setItem("valueEmp", eUsername.value);
       window.location.href = "employee-home.html";
@@ -25,6 +23,9 @@ async function employeeLogin(){
 
 
 
+const mUsername = document.getElementById("mana-username");
+const mPassword = document.getElementById("mana-password");
+
 // MANAGER LOGIN
 async function managerLogin(){
   let response = await fetch("http://127.0.0.1:5000/manager/login", {method:["POST"],
@@ -32,7 +33,7 @@ async function managerLogin(){
   body: JSON.stringify({"managerId": mUsername.value, "password": mPassword.value}) });
   if(response.status == 200){
     let body = await response.json();
-    console.log(body);
+    // console.log(body);
     if(body.Validated == true){
       window.location.href = "manager-home.html";
     } else {

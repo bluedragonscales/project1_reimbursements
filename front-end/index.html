@@ -4,30 +4,36 @@
   <meta charset="utf-8">
   <title>Home</title>
   <link rel="stylesheet" href="styles/style-front.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@300&display=swap" rel="stylesheet">
 </head>
 
 <body>
-  <div class="employee">
-    <div class="inputs">
-      <input type="number" placeholder="Employee Id" class="employee-login" id="emp-username">
-      <input type="text" placeholder="Password" class="employee-psw" id="emp-password">
-    </div>
-    <button onclick="employeeLogin();" id="emp-button">Employee Login</button>
-  </div>
 
-  <div class="manager">
-    <div class="inputs">
-      <input type="number" placeholder="Manager Id" class="manager-login" id="mana-username">
-      <input type="text" placeholder="Password" class="manager-psw" id="mana-password">
+  <header class="login-header">
+    <h1>DM Reimbursement System</h1>
+      <audio src="images/the-office-theme-song_01.mp3" controls>
+        This browser does not support the audio file.
+      </audio>
+  </header>
+
+  <section class="front-section">
+    <div class="employee-login">
+      <input type="number" placeholder="Employee Id" id="emp-username" min="1" max="6">
+      <input type="password" placeholder="Password" id="emp-password">
+      <button onclick="employeeLogin();" id="emp-button">Employee Portal</button>
     </div>
-    <button onclick="managerLogin();" id="mana-button">Manager Login</button>
-  </div>
+
+    <div class="manager-login">
+      <input type="number" placeholder="Manager Id" id="mana-username" min="1" max="2">
+      <input type="password" placeholder="Password" id="mana-password">
+      <button onclick="managerLogin();" id="mana-button">Manager Portal</button>
+    </div>
+  </section>
 
   <h3 id="error-message"></h3>
 
-  <audio src="images/the-office-theme-song_01.mp3" controls>
-    This browser does not support the audio file.
-  </audio>
 </body>
 <script src="scripts/front-script.js"></script>
 </html>

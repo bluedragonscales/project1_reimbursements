@@ -1,41 +1,68 @@
 * {
   margin: 0;
   box-sizing: border-box;
+  font-family: 'Source Serif 4', sans-serif;
 }
 
-header.sticky {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+button {
+  cursor: pointer;
+}
+
+nav > button:hover {
+  background-color: #18BFF3;
+  color: white;
+}
+
+header {
   color: white;
   background: #18BFF3;
-  height: 9rem;
   text-align: center;
-  border: none;
-  text-align: center;
-  position: sticky;
-  top: 0;
-  border: none;
 }
 
 audio::-webkit-media-controls-panel {
   background-color: #18BFF3;
-  width: 100px;
+  width: 300px;
   height: 56px;
 }
 
-button {
+#home-r {
+  display: block;
+}
+
+nav {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 80vh;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+}
+
+nav > button {
+  border-top: #18BFF3 solid 0.1px;
+  border-bottom: #18BFF3 solid 0.1px;
+}
+
+section {
+  height: 58vh;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  margin-right: 2rem;
+  margin-left: 17rem;
+}
+
+button, input, textarea {
   background-color: white;
   color: #18BFF3;
   padding: 0.7rem 2rem;
   font-size: 1rem;
-  cursor: pointer;
-  border: none;
+  border: #18BFF3 solid 3px;
 }
 
 p {
   text-align: center;
-  margin: 3rem 3rem;
+  margin: 1.5rem 3rem;
   margin-bottom: 5rem;
 }
 
@@ -52,10 +79,21 @@ p {
   margin-top: 2rem;
 }
 
-.request-reimbursement > input {
-  margin: 1rem;
+.request-reimbursement > input, textarea {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
   padding: 4px 10px;
   border: #18BFF3 solid 3px;
+  text-align: center;
+}
+
+#amount {
+  padding: 2px 8.5rem;
+}
+
+#r-submit {
+  padding: 2px 8.5rem;
+  margin-top: 1.5rem;
 }
 
 .change-status {
@@ -115,8 +153,8 @@ p {
 }
 
 h2 {
-  margin-top: 2.5rem;
-  margin-bottom: 1.5rem;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
   text-align: center;
   color: #18BFF3;
 }
@@ -124,14 +162,4 @@ h2 {
 table, th, td {
   border: #18BFF3 solid 3px;
   padding: 0.6rem;
-}
-
-footer {
-  margin-top: 4rem;
-  margin-bottom: 0;
-  color: white;
-  background: #18BFF3;
-  height: 7rem;
-  text-align: center;
-  border: none;
 }

@@ -1,5 +1,9 @@
-from flask import Flask, request, jsonify
+# This main module is where all the routes are crafted. They are set up so that they pass information back and forth in
+# a form that the front end can read and process. These routes are for everything needed from the employee modules and
+# the manager modules.
 
+# IMPORTS
+from flask import Flask, request, jsonify
 from a_entities.reimbursement import Reimbursement
 from dao_layer.postgres_employee_dao import PostgresEmployeeDAO
 from dao_layer.postgres_manager_dao import PostgresManagerDAO
@@ -9,17 +13,22 @@ from service_layer.custom_exceptions import *
 import logging
 from flask_cors import CORS
 
+# LOGGING CONFIGURATION
 logging.basicConfig(filename="records.log", level=logging.DEBUG, format=f"%(asctime)s %(levelname)s %(message)s")
 
+# FLASK AND CORS OBJECTS
 app = Flask(__name__)
 CORS(app)
+
+# CLASS OBJECTS FOR INJECTION AND METHOD USE
 employee_dao = PostgresEmployeeDAO()
 employee_service = PostgresEmployeeService(employee_dao)
 manager_dao = PostgresManagerDAO()
 manager_service = PostgresManagerService(manager_dao)
 
 
-# These are the routes for the employee side.
+
+# ROUTES FOR THE EMPLOYEE SIDE
 @app.post("/employee/login")
 def employee_login():
     login_body = request.get_json()
@@ -36,29 +45,52 @@ def employee_login():
 
 
 @app.post("/employee/reimbursement")
-def submit_reimbursement():
+def submit_new_reimbursement():
     try:
         rb_data = request.get_json()
-        new_reimbursement = Reimbursement(int(rb_data["reimburseId"]),   # default
-                                          rb_data["employeeId"],
+        new_reimbursement = Reimbursement(int(rb_data["reimburseId"]),
+                                          int(rb_data["employeeId"]),
                                           rb_data["requestLabel"],
                                           float(rb_data["amount"]),
-                                          rb_data["status"])   # default
-        rb_to_return = employee_service.service_submit_reimbursement(new_reimbursement)
+                                          rb_data["status"],
+                                          rb_data["reason"])
+        rb_to_return = employee_service.service_submit_new_reimbursement(new_reimbursement)
         rb_as_dictionary = rb_to_return.reimbursement_dictionary()
         rb_as_json = jsonify(rb_as_dictionary)
         return rb_as_json
     except InvalidAmountException as a:
         exception_dictionary = {"Message": str(a)}
         jsonify_exception = jsonify(exception_dictionary)
-        return jsonify_exception
+        return jsonify_exception, 200
 
 
 
 
-@app.get("/employee/reimbursement/<employee_id>")
-def view_reimbursement_per_employee(employee_id: str):
-    rb_results = employee_service.service_view_reimbursement_per_employee(int(employee_id))
+@app.get("/employee/pending/<employee_id>")
+def view_pending_emp_reimbursements(employee_id: str):
+    rb_results = employee_service.service_view_pending_emp_reimbursements(int(employee_id), 'Pending')
+    results_as_dictionary = []
+    for rb in rb_results:
+        dictionary_rb = rb.reimbursement_dictionary()
+        results_as_dictionary.append(dictionary_rb)
+    return jsonify(results_as_dictionary), 200
+
+
+
+@app.get("/employee/approved/<employee_id>")
+def view_approved_emp_reimbursements(employee_id: str):
+    rb_results = employee_service.service_view_pending_emp_reimbursements(int(employee_id), 'Approved')
+    results_as_dictionary = []
+    for rb in rb_results:
+        dictionary_rb = rb.reimbursement_dictionary()
+        results_as_dictionary.append(dictionary_rb)
+    return jsonify(results_as_dictionary), 200
+
+
+
+@app.get("/employee/denied/<employee_id>")
+def view_denied_emp_reimbursements(employee_id: str):
+    rb_results = employee_service.service_view_pending_emp_reimbursements(int(employee_id), 'Denied')
     results_as_dictionary = []
     for rb in rb_results:
         dictionary_rb = rb.reimbursement_dictionary()
@@ -69,7 +101,9 @@ def view_reimbursement_per_employee(employee_id: str):
 
 
 
-# These are the routes for the manager side.
+
+
+# ROUTES FOR THE MANAGER SIDE
 @app.post("/manager/login")
 def manager_login():
     login_body = request.get_json()

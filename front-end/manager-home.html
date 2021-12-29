@@ -6,23 +6,28 @@
     <link rel="stylesheet" href="styles/second-style.css">
   </head>
   <body>
-    <header class="sticky">
+
+    <header>
       <h1>Manager Portal</h1>
-      <div>
-        <audio src="images/the-office-theme-song_01.mp3" controls>
-          This browser does not support the audio file.
-        </audio>
-      </div>
-      <div>
-        <button id="status" class="tablink" onclick="openTab(event, 'status-r');">Submit Reimbursement Status</button>
-        <button id="view" class="tablink" onclick="openTab(event, 'view-r');">View Reimbursement Requests</button>
-        <button id="stats" class="tablink" onclick="openTab(event, 'statistics');">View Reimbursement Satistics</button>
-      </div>
+      <audio src="images/the-office-theme-song_01.mp3" controls>
+        This browser does not support the audio file.
+      </audio>
     </header>
 
-    <h2>Welcome</h2>
-    <p>Welcome to your manager portal for reimbursements.</p>
-    <p>Click on the tab "Submit Reimbursement Status" to change the status of a reimbursement request. Click on the tab "View Reimbursement Requests" to view all reimbursements requests. Click on the tab "View Reimbursement Statistics" to view different statistics on the reimbursement requests.</p>
+    <nav>
+      <button id="home" class="tablink" onclick="openTab(event, 'home-r')">Home</button>
+      <button id="status" class="tablink" onclick="openTab(event, 'status-r');">Change Reimbursement Status</button>
+      <button id="view" class="tablink" onclick="openTab(event, 'view-r');">Pending Reimbursements</button>
+      <button id="past" class="tablink" onclick="openTab(event, 'past-r');">Past Reimbursements</button>
+      <button id="stats" class="tablink" onclick="openTab(event, 'statistics');">View Reimbursement Satistics</button>
+      <button onclick="logout();" id="mana-logout">Log Out</button>
+    </nav>
+
+    <section id="home-r" class="tabcontent">
+      <h2>Welcome</h2>
+      <p>Welcome to your manager portal for the reimbursement system.</p>
+      <p>Click on the tab "Submit Reimbursement Status" to change the status of a reimbursement request. Click on the tab "View Reimbursement Requests" to view all reimbursements requests. Click on the tab "View Reimbursement Statistics" to view different statistics on the reimbursement requests.</p>
+    </section>
 
 
     <section id="status-r" class="tabcontent">
@@ -43,7 +48,7 @@
 
 
     <section id="view-r" class="tabcontent">
-      <h2>Your Reimbursement Requests</h2>
+      <h2>Pending Reimbursement Requests</h2>
       <div class="view-reimbursements">
         <table>
           <thead>
@@ -59,6 +64,27 @@
         </table>
       </div>
     </section>
+
+
+
+    <section id="past-r" class="tabcontent">
+      <h2>Past Reimbursement Requests</h2>
+      <div class="view-reimbursements">
+        <table>
+          <thead>
+            <th>Reimbursement Id</th>
+            <th>Employee Id</th>
+            <th>Request Purpose</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Reason</th>
+          </thead>
+          <tbody id="r-body">
+          </tbody>
+        </table>
+      </div>
+    </section>
+
 
 
     <section id="statistics" class="tabcontent">
@@ -77,10 +103,6 @@
       <h3 id="view-stats"></h3>
     </section>
 
-
-    <footer>
-      <button onclick="logout();" id="mana-logout">Log Out</button>
-    </footer>
 
   </body>
   <script src="scripts/manager-script.js"></script>

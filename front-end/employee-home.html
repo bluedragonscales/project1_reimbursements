@@ -4,29 +4,40 @@
     <meta charset="utf-8">
     <title>Employee Home</title>
     <link rel="stylesheet" href="styles/second-style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@300&display=swap" rel="stylesheet">
   </head>
   <body>
-    <header class="sticky">
+
+    <header>
       <h1>Employee Portal</h1>
-      <div>
-        <audio src="images/the-office-theme-song_01.mp3" controls>
-          This browser does not support the audio file.
-        </audio>
-      </div>
-      <div>
-        <button id="request" class="tablink" onclick="openTab(event, 'request-r')">Submit Reimbursement Request</button>
-        <button id="view" class="tablink" onclick="openTab(event, 'view-r')">View Reimbursement Requests</button>
-      </div>
+      <audio src="images/the-office-theme-song_01.mp3" controls>
+        This browser does not support the audio file.
+      </audio>
     </header>
 
-    <h2>Welcome</h2>
-    <p>Welcome to your employee portal for reimbursements. Please make sure all your reciepts are available.</p>
-    <p>Click on the tab "Submit Reimbursement Request" to submit a reimbursement. Click on the tab "View Reimbursement Requests" to view the status of your reimbursements requests.</p>
+    <nav>
+      <button id="home" class="tablink" onclick="openTab(event, 'home-r')">Home</button>
+      <button id="request" class="tablink" onclick="openTab(event, 'request-r')">New Reimbursement</button>
+      <button id="pending" class="tablink" onclick="openTab(event, 'view-r')">Pending Reimbursements</button>
+      <button id="approved" class="tablink" onclick="openTab(event, 'approved-r')">Approved Reimbursements</button>
+      <button id="denied" class="tablink" onclick="openTab(event, 'denied-r')">Denied Reimbursements</button>
+      <button onclick="logout();" id="emp-logout">Log Out</button>
+    </nav>
+
+
+    <section id="home-r" class="tabcontent">
+      <h2>Welcome</h2>
+      <p>Welcome to your employee portal for the reimbursement system. Please make sure all your reciepts are available before requesting a reimbursement.</p>
+      <p>Click one of the links on the left to submit a new reimbursement, or to view any of your pending and past reimbursements. Please contact your immediate supervisor if you have questions.</p>
+    </section>
+
 
     <section id="request-r" class="tabcontent">
-      <h2>Request Reimbursement Form</h2>
+      <h2>Request New Reimbursement Form</h2>
       <div class="request-reimbursement">
-        <input type="text" placeholder="Request purpose" id="purpose" maxlength="200">
+        <textarea id="purpose" rows="2" cols="50" maxlength="200" placeholder="Reason for the reimbursement request"></textarea>
         <input type="number" placeholder="Amount" id="amount" min="1">
         <input type="submit" class="submit-button" id="r-submit" onclick="createReimbursement();">
         <h3 id="request-created"></h3>
@@ -34,14 +45,12 @@
     </section>
 
 
-
     <section id="view-r" class="tabcontent">
-      <h2>Your Reimbursement Requests</h2>
+      <h2>Your Pending Reimbursements</h2>
       <div class="view-reimbursements">
         <table id="reimburse-table">
           <thead>
             <th>Reimbursement Id</th>
-            <th>Employee Id</th>
             <th>Request Purpose</th>
             <th>Amount</th>
             <th>Status</th>
@@ -54,9 +63,41 @@
     </section>
 
 
-    <footer>
-      <button onclick="logout();" id="emp-logout">Log Out</button>
-    </footer>
+    <section id="approved-r" class="tabcontent">
+      <h2>Your Approved Reimbursements</h2>
+      <div class="view-reimbursements">
+        <table id="reimburse-table">
+          <thead>
+            <th>Reimbursement Id</th>
+            <th>Request Purpose</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Reason</th>
+          </thead>
+          <tbody id="r-body">
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+
+    <section id="denied-r" class="tabcontent">
+      <h2>Denied Reimbursements</h2>
+      <div class="view-reimbursements">
+        <table id="reimburse-table">
+          <thead>
+            <th>Reimbursement Id</th>
+            <th>Request Purpose</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Reason</th>
+          </thead>
+          <tbody id="r-body">
+          </tbody>
+        </table>
+      </div>
+    </section>
+
 
   </body>
   <script src="scripts/employee-script.js"></script>
