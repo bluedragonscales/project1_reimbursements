@@ -1,9 +1,4 @@
-# This is the framework for the actions an employee can take with the reimbursement entity plus more. They can log in to
-# the reimbursement system of their company. A new reimbursement request can be submitted. They can view all of their
-# reimbursement requests, and they can view their reimbursements filtered by its status.
-
 from abc import ABC, abstractmethod
-from a_entities.employee import Employee
 from a_entities.reimbursement import Reimbursement
 
 
@@ -24,17 +19,17 @@ class EmployeeDAO(ABC):
     def submit_new_reimbursement(self, reimbursement: Reimbursement):
         pass
 
-    # Be able to view all pending reimbursement requests.
+    # Be able to view all pending reimbursement requests per employee.
     @abstractmethod
-    def view_pending_emp_reimbursements(self, employee_id: int, pending: str) -> list[Reimbursement]:
+    def view_pending_emp_reimbursements(self, employee_id: int):
         pass
 
-    # Be able to view all approved reimbursement requests.
+    # Be able to view all approved reimbursement requests per employee.
     @abstractmethod
-    def view_approved_emp_reimbursements(self, employee_id: int, approved: str) -> list[Reimbursement]:
+    def view_approved_emp_reimbursements(self, employee_id: int, approved: str):
         pass
 
-    # Be able to view all denied reimbursement requests.
+    # Be able to view all denied reimbursement requests per employee.
     @abstractmethod
-    def view_denied_emp_reimbursements(self, employee_id: int, denied: str) -> list[Reimbursement]:
+    def view_denied_emp_reimbursements(self, employee_id: int, denied: str):
         pass

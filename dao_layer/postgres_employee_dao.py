@@ -20,8 +20,10 @@ class PostgresEmployeeDAO(EmployeeDAO):
         employee_record = cursor.fetchone()
         if employee_record:
             employee = Employee(*employee_record)
-            if employee.password == emp_password and employee.username == emp_username:
-                return True
+            if employee.username == emp_username and employee.password == emp_password:
+                return employee
+            else:
+                return False
         else:
             return False
 
@@ -73,44 +75,59 @@ class PostgresEmployeeDAO(EmployeeDAO):
     # This method handles populating the reimbursement requests, per employee, that are pending. We pass in the employee
     # id to pick the employee that wants to see their reimbursements. We pass in the pending status to pick out only the
     # pending reimbursement requests.
-    def view_pending_emp_reimbursements(self, employee_id: int, pending: str) -> list[Reimbursement]:
-        sql = 'select * from "project1".reimbursement where employee_id = %s and status = %s'
-        cursor = connection.cursor()
-        cursor.execute(sql, (employee_id, pending))
-        reimburse_records = cursor.fetchall()
-        pending_reimbursements_list = []
-        # We've found all the pending reimbursements for this particular employee and appended them to their own list.
-        for pending in reimburse_records:
-            pending_reimbursements_list.append(Reimbursement(*pending))
-        # Now we're returning that list of pending reimbursements to the front-end website.
-        return pending_reimbursements_list
+    def view_pending_emp_reimbursements(self, employee_id: int):
+        employee = self.find_employee_per_id(employee_id)
+        if employee:
+            sql = "select * from reimbursement where employee_id = %s and status = 'Pending'"
+            cursor = connection.cursor()
+            cursor.execute(sql, [employee_id])
+            reimburse_records = cursor.fetchall()
+            pending_reimbursements_list = []
+            # We've found all the pending reimbursements for this particular employee and appended them to their own
+            # list.
+            for pending in reimburse_records:
+                pending_reimbursements_list.append(Reimbursement(*pending))
+            # Now we're returning that list of pending reimbursements to the front-end website.
+            return pending_reimbursements_list
+        else:
+            return False
 
 
 
     # This method handles populating the reimbursement requests, per employee, that have been approved.
-    def view_approved_emp_reimbursements(self, employee_id: int, approved: str) -> list[Reimbursement]:
-        sql = 'select * from "project1".reimbursement where employee_id = %s and status = %s'
-        cursor = connection.cursor()
-        cursor.execute(sql, (employee_id, approved))
-        reimburse_records = cursor.fetchall()
-        approved_reimbursements_list = []
-        # We've found all the approved reimbursements for this particular employee and appended them to their own list.
-        for approved in reimburse_records:
-            approved_reimbursements_list.append(Reimbursement(*approved))
-        # Now we're returning that list of approved reimbursements to the front-end website.
-        return approved_reimbursements_list
+    def view_approved_emp_reimbursements(self, employee_id: int, approved: str):
+        employee = self.find_employee_per_id(employee_id)
+        if employee:
+            sql = 'select * from reimbursement where employee_id = %s and status = %s'
+            cursor = connection.cursor()
+            cursor.execute(sql, (employee_id, approved))
+            reimburse_records = cursor.fetchall()
+            approved_reimbursements_list = []
+            # We've found all the approved reimbursements for this particular employee and appended them to their own
+            # list.
+            for approved in reimburse_records:
+                approved_reimbursements_list.append(Reimbursement(*approved))
+            # Now we're returning that list of approved reimbursements to the front-end website.
+            return approved_reimbursements_list
+        else:
+            return False
 
 
 
     # This method handles populating the reimbursement requests, per employee, that were denied.
-    def view_denied_emp_reimbursements(self, employee_id: int, denied: str) -> list[Reimbursement]:
-        sql = 'select * from "project1".reimbursement where employee_id = %s and status = %s'
-        cursor = connection.cursor()
-        cursor.execute(sql, (employee_id, denied))
-        reimburse_records = cursor.fetchall()
-        denied_reimbursements_list = []
-        # We've found all the denied reimbursements for this particular employee and appended them to their own list.
-        for denied in reimburse_records:
-            denied_reimbursements_list.append(Reimbursement(*denied))
-        # Now we're returning that list of denied reimbursements to the front-end website.
-        return denied_reimbursements_list
+    def view_denied_emp_reimbursements(self, employee_id: int, denied: str):
+        employee = self.find_employee_per_id(employee_id)
+        if employee:
+            sql = 'select * from reimbursement where employee_id = %s and status = %s'
+            cursor = connection.cursor()
+            cursor.execute(sql, (employee_id, denied))
+            reimburse_records = cursor.fetchall()
+            denied_reimbursements_list = []
+            # We've found all the denied reimbursements for this particular employee and appended them to their own
+            # list.
+            for denied in reimburse_records:
+                denied_reimbursements_list.append(Reimbursement(*denied))
+            # Now we're returning that list of denied reimbursements to the front-end website.
+            return denied_reimbursements_list
+        else:
+            return False

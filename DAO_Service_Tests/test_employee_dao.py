@@ -1,14 +1,11 @@
-# This is the data access object layer test module. These happy path unit tests will make sure all of the methods
-# created in the "postgres_employee_dao" module will work perfectly when correct information is passed in.
-
 from a_entities.reimbursement import Reimbursement
 from dao_layer.postgres_employee_dao import PostgresEmployeeDAO
 
-# This is the object created from the "PostgresEmployeeDAO" class which is needed to use the methods in that class for
-# the tests to run properly.
+
 employee_dao = PostgresEmployeeDAO()
 
-# LOGIN TESTS
+
+# EMPLOYEE LOGIN TESTS
 def test_employee_login_happy():
     employee = employee_dao.employee_login('BeetFarmer', 'IambetterthanJim')
     assert employee
@@ -32,29 +29,50 @@ def test_find_employee_by_id_sad():
 
 
 # NEW REIMBURSEMENT TESTS
-def test_submit_new_reimbursement_happy():
+def test_new_reimbursement_happy():
     create_reimbursement = Reimbursement(0, 4, 22.99, '', 'i want mor cookies for the ofice', '')
     new_reimbursement = employee_dao.submit_new_reimbursement(create_reimbursement)
     assert new_reimbursement.amount == 22.99
 
-def test_submit_new_reimbursement_sad():
+def test_new_reimbursement_with_wrong_amount_sad():
     create_reimbursement = Reimbursement(0, 1, -3.19, '', 'Some staples and paper reams.', '')
+    another_reimbursement = employee_dao.submit_new_reimbursement(create_reimbursement)
+    assert another_reimbursement == False
+
+def test_new_reimbursement_with_wrong_id_sad():
+    create_reimbursement = Reimbursement(0, 200, 103.89, '', 'Some staples and paper reams.', '')
     another_reimbursement = employee_dao.submit_new_reimbursement(create_reimbursement)
     assert another_reimbursement == False
 
 
 
+# PENDING REIMBURSEMENT TESTS
+def test_view_pending_reimbursements_happy():
+    pending_list = employee_dao.view_pending_emp_reimbursements(2)
+    assert len(pending_list) >= 0
 
-# def test_view_pending_emp_reimbursements_happy():
-#     pending_list = employee_dao.view_pending_emp_reimbursements(2, 'Pending')
-#     assert len(pending_list) >= 0
-#
-#
-# def test_view_approved_emp_reimbursements_happy():
-#     approved_list = employee_dao.view_approved_emp_reimbursements(3, 'Approved')
-#     assert len(approved_list) >= 0
-#
-#
-# def test_view_denied_emp_reimbursements_happy():
-#     denied_list = employee_dao.view_denied_emp_reimbursements(4, 'Denied')
-#     assert len(denied_list) >= 0
+def test_view_pending_reimbursements_sad():
+    pending_list = employee_dao.view_pending_emp_reimbursements(100)
+    assert pending_list == False
+
+
+
+# APPROVED REIMBURSEMENT TESTS
+def test_view_approved_reimbursements_happy():
+    approved_list = employee_dao.view_approved_emp_reimbursements(3, 'Approved')
+    assert len(approved_list) >= 0
+
+def test_view_approved_reimbursements_sad():
+    approved_list = employee_dao.view_approved_emp_reimbursements(1000, 'Approved')
+    assert approved_list == False
+
+
+
+# DENIED REIMBURSEMENT TESTS
+def test_view_denied_reimbursements_happy():
+    denied_list = employee_dao.view_denied_emp_reimbursements(4, 'Denied')
+    assert len(denied_list) >= 0
+
+def test_view_denied_reimbursements_sad():
+    denied_list = employee_dao.view_denied_emp_reimbursements(1000, 'Denied')
+    assert denied_list == False
