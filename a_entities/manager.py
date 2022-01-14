@@ -1,4 +1,5 @@
 
+# MANAGER ENTITY
 class Manager:
     def __init__(self, manager_id: int, full_name: str, username: str, password: str):
         self.manager_id = manager_id

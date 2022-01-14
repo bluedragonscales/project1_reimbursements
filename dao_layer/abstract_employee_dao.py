@@ -21,15 +21,15 @@ class EmployeeDAO(ABC):
 
     # Be able to view all pending reimbursement requests per employee.
     @abstractmethod
-    def view_pending_emp_reimbursements(self, employee_id: int):
+    def view_pending_emp_reimbursements(self, emp_id: int):
         pass
 
     # Be able to view all approved reimbursement requests per employee.
     @abstractmethod
-    def view_approved_emp_reimbursements(self, employee_id: int, approved: str):
+    def view_approved_emp_reimbursements(self, emp_id: int):
         pass
 
     # Be able to view all denied reimbursement requests per employee.
     @abstractmethod
-    def view_denied_emp_reimbursements(self, employee_id: int, denied: str):
+    def view_denied_emp_reimbursements(self, emp_id: int):
         pass

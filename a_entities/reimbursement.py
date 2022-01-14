@@ -1,4 +1,5 @@
 
+# REIMBURSEMENT ENTITY
 class Reimbursement:
     def __init__(self, reimburse_id: int, employee_id: int, amount: float, status: str, emp_reason: str, manager_reason: str):
         self.reimburse_id = reimburse_id

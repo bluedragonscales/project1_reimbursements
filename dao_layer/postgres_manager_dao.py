@@ -22,6 +22,8 @@ class PostgresManagerDAO(ManagerDAO):
             return False
 
 
+
+
     def all_pending_reimbursements(self):
         sql = "select * from reimbursement where status = 'Pending'"
         cursor = connection.cursor()
@@ -34,6 +36,7 @@ class PostgresManagerDAO(ManagerDAO):
             return pending_list
         else:
             return False
+
 
 
 
@@ -51,6 +54,7 @@ class PostgresManagerDAO(ManagerDAO):
 
 
 
+
     def deny_reimbursement(self, reimburse_id: int, reason: str):
         pending_reimbursements = self.all_pending_reimbursements()
         for pr in pending_reimbursements:
@@ -62,6 +66,7 @@ class PostgresManagerDAO(ManagerDAO):
                 status = cursor.fetchone()[0]
                 connection.commit()
                 return status
+
 
 
 
@@ -80,6 +85,7 @@ class PostgresManagerDAO(ManagerDAO):
 
 
 
+
     def view_denied_requests(self):
         sql = "select * from reimbursement where status = 'Denied'"
         cursor = connection.cursor()
@@ -95,6 +101,7 @@ class PostgresManagerDAO(ManagerDAO):
 
 
 
+
     def all_reimbursements_per_employee(self, emp_id: int):
         sql = "select * from reimbursement where employee_id = %s"
         cursor = connection.cursor()
@@ -107,6 +114,7 @@ class PostgresManagerDAO(ManagerDAO):
             return emp_reimburse_list
         else:
             return False
+
 
 
 
@@ -140,7 +148,7 @@ class PostgresManagerDAO(ManagerDAO):
 
 
 
-    # Will be used to show which employee has made the most reimbursement requests.
+    # To show which employee has made the most reimbursement requests.
     def all_requests_per_employee(self):
         employee_list = self.view_all_employees()
         count_list = []
@@ -156,6 +164,7 @@ class PostgresManagerDAO(ManagerDAO):
         return statistic_tuple
 
 
+
     # To show the total dollar amount of all reimbursements approved.
     def dollar_total_of_approved_reimbursements(self):
         sql = "select sum(amount) from reimbursement where status = 'Approved'"
@@ -163,6 +172,7 @@ class PostgresManagerDAO(ManagerDAO):
         cursor.execute(sql)
         sum_approved = cursor.fetchone()[0]
         return sum_approved
+
 
 
     # To show which employee has the most denials.
@@ -197,62 +207,3 @@ class PostgresManagerDAO(ManagerDAO):
             max_emp = approvals_list.index(highest_approvals) + 1
             statistic_tuple = (highest_approvals, max_emp)
         return statistic_tuple
-
-
-
-
-
-
-
-
-    # def view_all_reimbursement_requests(self) -> list[Reimbursement]:
-    #     sql = 'select * from "project1".reimbursement'
-    #     cursor = connection.cursor()
-    #     cursor.execute(sql)
-    #     reimbursement_records = cursor.fetchall()
-    #     reimbursement_list = []
-    #     for reimburse in reimbursement_records:
-    #         reimbursement_list.append(Reimbursement(*reimburse))
-    #     return reimbursement_list
-    #
-    #
-    #
-    # def view_reimburse_requests_per_status(self, status: str) -> list[Reimbursement]:
-    #     sql = 'select * from "project1".reimbursement where status = %s'
-    #     cursor = connection.cursor()
-    #     cursor.execute(sql, [status])
-    #     reimburse_records = cursor.fetchall()
-    #     reimburse_list = []
-    #     for reimburse in reimburse_records:
-    #         reimburse_list.append(Reimbursement(*reimburse))
-    #     return reimburse_list
-    #
-    #
-    #
-    # def view_statistics(self, statistic: str):
-    #     cursor = connection.cursor()
-    #     if statistic == "Highest":    # To view the highest reimbursement request.
-    #         sql_high = 'select max(amount) from "project1".reimbursement'
-    #         cursor.execute(sql_high)
-    #         highest_reimbursement = cursor.fetchone()[0]
-    #         return highest_reimbursement
-    #     elif statistic == "Lowest":  # To view the lowest reimbursement request.
-    #         sql_low = 'select min(amount) from "project1".reimbursement'
-    #         cursor.execute(sql_low)
-    #         lowest_reimbursement = cursor.fetchone()[0]
-    #         return lowest_reimbursement
-    #     elif statistic == "Average":   # To view the average of the reimbursement amounts that were approved.
-    #         sql_avg = 'select avg(amount) from "project1".reimbursement'
-    #         cursor.execute(sql_avg)
-    #         average = cursor.fetchone()[0]
-    #         return average
-    #     elif statistic == "Total":   # To view the total amount of reimbursements.
-    #         sql_total = 'select sum(amount) from "project1".reimbursement'
-    #         cursor.execute(sql_total)
-    #         total = cursor.fetchone()[0]
-    #         return total
-    #     elif statistic == "Count":   # To view how many reimbursements have been requested no matter the status.
-    #         sql_count = 'select count(amount) from "project1".reimbursement'
-    #         cursor.execute(sql_count)
-    #         count = cursor.fetchone()[0]
-    #         return count

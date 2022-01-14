@@ -1,4 +1,5 @@
 
+# EMPLOYEE ENTITY
 class Employee:
     def __init__(self, employee_id: int, manager_id: int, full_name: str, username: str, password: str):
         self.employee_id = employee_id

@@ -11,7 +11,7 @@ class ManagerDAO(ABC):
     def manager_login(self, manager_username: str, manager_password: str):
         pass
 
-    # Be able to view all reimbursements that are pending approval.
+    # Be able to view all reimbursements that are pending.
     @abstractmethod
     def all_pending_reimbursements(self):
         pass
