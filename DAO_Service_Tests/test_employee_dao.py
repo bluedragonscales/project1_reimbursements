@@ -30,9 +30,9 @@ def test_find_employee_by_id_sad():
 
 # NEW REIMBURSEMENT TESTS
 def test_new_reimbursement_happy():
-    create_reimbursement = Reimbursement(0, 4, 22.99, '', 'i want mor cookies for the ofice', '')
+    create_reimbursement = Reimbursement(0, 4, 9.98, '', 'girl scout cookies', '')
     new_reimbursement = employee_dao.submit_new_reimbursement(create_reimbursement)
-    assert new_reimbursement.amount == 22.99
+    assert new_reimbursement.amount == 9.98
 
 def test_new_reimbursement_with_wrong_amount_sad():
     create_reimbursement = Reimbursement(0, 1, -3.19, '', 'Some staples and paper reams.', '')

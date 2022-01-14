@@ -1,3 +1,4 @@
+from a_entities.employee import Employee
 from a_entities.manager import Manager
 from a_entities.reimbursement import Reimbursement
 from dao_layer.abstract_manager_dao import ManagerDAO
@@ -21,7 +22,7 @@ class PostgresManagerDAO(ManagerDAO):
             return False
 
 
-    def all_pending_reimbursements(self) -> list[Reimbursement]:
+    def all_pending_reimbursements(self):
         sql = "select * from reimbursement where status = 'Pending'"
         cursor = connection.cursor()
         cursor.execute(sql)
@@ -29,64 +30,173 @@ class PostgresManagerDAO(ManagerDAO):
         pending_list = []
         for reimburse in pending_reimbursements:
             pending_list.append(Reimbursement(*reimburse))
-        return pending_list
-
-
-    def approve_reimbursement(self, reimburse_id: int, message: str):
-        sql = "update reimbursement set status = 'Approved', manager_reason = %s where reimburse_id = %s" \
-              " and status = 'Pending'"
-        cursor = connection.cursor()
-        cursor.execute(sql, (message, reimburse_id))
-        status = cursor.fetchone()[0]
-        connection.commit()
-        if status == "Approved":
-            return status
+        if len(pending_list) > 0:
+            return pending_list
         else:
             return False
 
 
 
-    def deny_reimbursement(self, reimburse_id: int, message: str):
-        still_pending = self.all_pending_reimbursements()
-        for pr in still_pending:
+    def approve_reimbursement(self, reimburse_id: int, reason: str):
+        pending_reimbursements = self.all_pending_reimbursements()
+        for pr in pending_reimbursements:
+            if pr.reimburse_id == reimburse_id:
+                sql = "update reimbursement set status = 'Approved', manager_reason = %s where reimburse_id = %s " \
+                          "returning status"
+                cursor = connection.cursor()
+                cursor.execute(sql, (reason, reimburse_id))
+                status = cursor.fetchone()[0]
+                connection.commit()
+                return status
+
+
+
+    def deny_reimbursement(self, reimburse_id: int, reason: str):
+        pending_reimbursements = self.all_pending_reimbursements()
+        for pr in pending_reimbursements:
             if pr.reimburse_id == reimburse_id:
                 sql = "update reimbursement set status = 'Denied', manager_reason = %s where reimburse_id = %s " \
                       "returning status"
                 cursor = connection.cursor()
-                cursor.execute(sql, [reimburse_id])
+                cursor.execute(sql, (reason, reimburse_id))
                 status = cursor.fetchone()[0]
                 connection.commit()
                 return status
-            else:
-                return False
 
 
-    def view_past_approved_requests(self) -> list[Reimbursement]:
-        pass
 
-    # Be able to view all past denied reimbursement requests.
-    def view_past_denied_requests(self) -> list[Reimbursement]:
-        pass
+    def view_approved_requests(self):
+        sql = "select * from reimbursement where status = 'Approved'"
+        cursor = connection.cursor()
+        cursor.execute(sql)
+        approved_reimbursements = cursor.fetchall()
+        approved_list = []
+        for reimburse in approved_reimbursements:
+            approved_list.append(Reimbursement(*reimburse))
+        if len(approved_list) > 0:
+            return approved_list
+        else:
+            return False
 
-    # To show which employee has requested the highest dollar total in reimbursements.
-    def employee_with_highest_total(self):
-        pass
 
-    # To show which employee has made the most reimbursement requests.
-    def employee_with_most_requests(self):
-        pass
+
+    def view_denied_requests(self):
+        sql = "select * from reimbursement where status = 'Denied'"
+        cursor = connection.cursor()
+        cursor.execute(sql)
+        denied_reimbursements = cursor.fetchall()
+        denied_list = []
+        for reimburse in denied_reimbursements:
+            denied_list.append(Reimbursement(*reimburse))
+        if len(denied_list) > 0:
+            return denied_list
+        else:
+            return False
+
+
+
+    def all_reimbursements_per_employee(self, emp_id: int):
+        sql = "select * from reimbursement where employee_id = %s"
+        cursor = connection.cursor()
+        cursor.execute(sql, [emp_id])
+        employee_reimbursements = cursor.fetchall()
+        emp_reimburse_list = []
+        for emp_reimburse in employee_reimbursements:
+            emp_reimburse_list.append(Reimbursement(*emp_reimburse))
+        if len(emp_reimburse_list) > 0:
+            return emp_reimburse_list
+        else:
+            return False
+
+
+
+    def view_all_employees(self) -> list[Employee]:
+        sql = "select * from employee"
+        cursor = connection.cursor()
+        cursor.execute(sql)
+        employees = cursor.fetchall()
+        employee_list = []
+        for employee in employees:
+            employee_list.append(Employee(*employee))
+        return employee_list
+
+
+
+
+    # To show which employee has requested the highest dollar amount in reimbursements.
+    def highest_reimbursement_total(self):
+        employee_list = self.view_all_employees()
+        sum_list = []
+        for emp in employee_list:
+            sql = "select sum(amount) from reimbursement where employee_id = %s"
+            cursor = connection.cursor()
+            cursor.execute(sql, [emp.employee_id])
+            emp_sum = cursor.fetchone()[0]
+            sum_list.append(emp_sum)
+            highest_sum = max(sum_list)
+            max_emp = sum_list.index(highest_sum) + 1
+            statistic_tuple = (highest_sum, max_emp)
+        return statistic_tuple
+
+
+
+    # Will be used to show which employee has made the most reimbursement requests.
+    def all_requests_per_employee(self):
+        employee_list = self.view_all_employees()
+        count_list = []
+        for emp in employee_list:
+            sql = "select count(amount) from reimbursement where employee_id = %s"
+            cursor = connection.cursor()
+            cursor.execute(sql, [emp.employee_id])
+            emp_count = cursor.fetchone()[0]
+            count_list.append(emp_count)
+            highest_count = max(count_list)
+            max_emp = count_list.index(highest_count) + 1
+            statistic_tuple = (highest_count, max_emp)
+        return statistic_tuple
+
 
     # To show the total dollar amount of all reimbursements approved.
     def dollar_total_of_approved_reimbursements(self):
-        pass
+        sql = "select sum(amount) from reimbursement where status = 'Approved'"
+        cursor = connection.cursor()
+        cursor.execute(sql)
+        sum_approved = cursor.fetchone()[0]
+        return sum_approved
+
 
     # To show which employee has the most denials.
     def employee_with_most_denials(self):
-        pass
+        employee_list = self.view_all_employees()
+        denials_list = []
+        for emp in employee_list:
+            sql = "select count(status) from reimbursement where status = 'Denied' and employee_id = %s"
+            cursor = connection.cursor()
+            cursor.execute(sql, [emp.employee_id])
+            emp_denials = cursor.fetchone()[0]
+            denials_list.append(emp_denials)
+            highest_denials = max(denials_list)
+            max_emp = denials_list.index(highest_denials) + 1
+            statistic_tuple = (highest_denials, max_emp)
+        return statistic_tuple
+
+
+
 
     # To show which employee has the most approvals.
     def employee_with_most_approvals(self):
-        pass
+        employee_list = self.view_all_employees()
+        approvals_list = []
+        for emp in employee_list:
+            sql = "select count(status) from reimbursement where status = 'Approved' and employee_id = %s"
+            cursor = connection.cursor()
+            cursor.execute(sql, [emp.employee_id])
+            emp_approvals = cursor.fetchone()[0]
+            approvals_list.append(emp_approvals)
+            highest_approvals = max(approvals_list)
+            max_emp = approvals_list.index(highest_approvals) + 1
+            statistic_tuple = (highest_approvals, max_emp)
+        return statistic_tuple
 
 
 
