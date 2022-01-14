@@ -2,6 +2,7 @@
 # is passed back and forth through the DBeaver database management system (hosted through AWS) using PostgreSQL.
 
 # IMPORTS
+from a_entities.employee import Employee
 from a_entities.reimbursement import Reimbursement
 from dao_layer.abstract_employee_dao import EmployeeDAO
 from database_connection import connection
@@ -10,19 +11,31 @@ from database_connection import connection
 # DAO LAYER CLASS
 class PostgresEmployeeDAO(EmployeeDAO):
 
-    # This method handles grabbing the correct password that matches the username (in this case the username is the
-    # employee id). It validates as true if the correct password is used with the username, and it validates as false if
-    # the incorrect password is used with the username.
-    def employee_login(self, employee_id: int, password: str):
-        sql = 'select password from "project1".employee where employee_id = %s'
+    # This method validates the login. When an employee gives their username it pulls up the employee's information. If
+    # the password the employee provided matches the one in the database then the whole employee entity is returned.
+    def employee_login(self, emp_username: str, emp_password: str):
+        sql = 'select * from employee where username = %s'
         cursor = connection.cursor()
-        cursor.execute(sql, [employee_id])
-        validate = cursor.fetchone()[0]
-        # We return True or False to send back up to the API website to be able to correctly validate whether the user
-        # entered the correct username and password. This makes sure the password entered on the front end, matches the
-        # password pulled from the database for that employee id.
-        if validate == password:
-            return True
+        cursor.execute(sql, [emp_username])
+        employee_record = cursor.fetchone()
+        if employee_record:
+            employee = Employee(*employee_record)
+            if employee.password == emp_password and employee.username == emp_username:
+                return True
+        else:
+            return False
+
+
+
+    # This method will be used with other methods to verify the employee exists.
+    def find_employee_per_id(self, emp_id: int):
+        sql = 'select * from employee where employee_id = %s'
+        cursor = connection.cursor()
+        cursor.execute(sql, [emp_id])
+        emp_record = cursor.fetchone()
+        if emp_record:
+            employee = Employee(*emp_record)
+            return employee
         else:
             return False
 
@@ -35,23 +48,24 @@ class PostgresEmployeeDAO(EmployeeDAO):
     # modified when the manager approves or denies the reimbursement. The third default is the reason which is first
     # initialized to pending but will be changed to a reason why the manager approved or denied the reimbursement
     # request.
-    def submit_new_reimbursement(self, reimbursement: Reimbursement) -> Reimbursement:
-        sql = 'insert into "project1".reimbursement values(default, %s, %s, %s, default, default) ' \
-              'returning reimburse_id'
-        cursor = connection.cursor()
-        # The defaults don't need arguments to pass to them so we only send in the reimbursement's values that had to be
-        # initialized through the employee's creation process.
-        cursor.execute(sql, (reimbursement.employee_id,
-                             reimbursement.request_label,
-                             reimbursement.amount))
-        # Since the reimbursement id is a serial created by the database, it has to be reassigned to the actual
-        # reimbursement object here in Python. So we grab the value that was returned with the sql statement and then
-        # assigned it to the reimbursement object.
-        reimburse_id = cursor.fetchone()[0]
-        reimbursement.reimburse_id = reimburse_id
-        connection.commit()
-        # We send the full reimbursement object back up to the API so that it can be viewed on the website.
-        return reimbursement
+    def submit_new_reimbursement(self, reimbursement: Reimbursement):
+        real_employee = self.find_employee_per_id(reimbursement.employee_id)
+        if real_employee and reimbursement.amount > 0:
+            sql = 'insert into reimbursement values(default, %s, %s, default, %s, default) returning reimburse_id'
+            cursor = connection.cursor()
+            # The defaults don't need arguments to pass to them so we only send in the reimbursement's values that had
+            # to be initialized through the employee's creation process.
+            cursor.execute(sql, (reimbursement.employee_id, reimbursement.amount, reimbursement.emp_reason))
+            # Since the reimbursement id is a serial created by the database, it has to be reassigned to the actual
+            # reimbursement object here in Python. So we grab the value that was returned with the sql statement and
+            # then assign it to the reimbursement object.
+            reimburse_id = cursor.fetchone()[0]
+            reimbursement.reimburse_id = reimburse_id
+            connection.commit()
+            # We send the full reimbursement object back up to the API so that it can be viewed on the website.
+            return reimbursement
+        else:
+            return False
 
 
 

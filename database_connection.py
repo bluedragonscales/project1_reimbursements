@@ -4,10 +4,10 @@ from psycopg import connect, OperationalError
 def create_connection():
     try:
         conn = connect(
-            host=os.environ.get("HOST2"),
+            host=os.environ.get("HOST"),
             dbname=os.environ.get("DATABASE"),
             user=os.environ.get("USER"),
-            password=os.environ.get("PASSWORD2"),
+            password=os.environ.get("PASSWORD"),
             port=os.environ.get("PORT")
         )
         return conn

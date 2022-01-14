@@ -49,7 +49,7 @@ async function createReimbursement(){
 // TO VIEW PENDING REIMBURSEMENT DATA
 // To activate the pending tab on the website.
 let pendingButton = document.getElementById("pending");
-button.addEventListener("click", getPendingData);
+pendingButton.addEventListener("click", getPendingData);
 
 async function getPendingData(){
   // tableBody.innerHTML = ``;

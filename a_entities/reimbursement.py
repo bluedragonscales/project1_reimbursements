@@ -6,21 +6,20 @@
 # the employees and managers can interact with.
 
 class Reimbursement:
-    def __init__(self, reimburse_id: int, employee_id: int,
-                 request_label: str, amount: float, status: str, reason: str):
+    def __init__(self, reimburse_id: int, employee_id: int, amount: float, status: str, emp_reason: str, manager_reason: str):
         self.reimburse_id = reimburse_id
         self.employee_id = employee_id
-        self.request_label = request_label
         self.amount = amount
         self.status = status
-        self.reason = reason
+        self.emp_reason = emp_reason
+        self.manager_reason = manager_reason
 
     def reimbursement_dictionary(self):
         return {
             "reimburseId" : self.reimburse_id,
             "employeeId" : self.employee_id,
-            "requestLabel" : self.request_label,
             "amount" : self.amount,
             "status" : self.status,
-            "reason" : self.reason
+            "empReason" : self.emp_reason,
+            "managerReason" : self.manager_reason
         }
