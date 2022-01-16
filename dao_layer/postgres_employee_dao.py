@@ -7,6 +7,10 @@ from database_connection import connection
 # DAO LAYER CLASS
 class PostgresEmployeeDAO(EmployeeDAO):
 
+    # If the username entered does not exist in the database the method will return false. If the username exists it
+    # will pull up the credentials for that employee. If the password entered does not match the password for that
+    # employee the method will return false. If the username and password are correct and correlated to the same
+    # employee then the employee object will be returned.
     def employee_login(self, emp_username: str, emp_password: str):
         sql = 'select * from employee where username = %s'
         cursor = connection.cursor()
@@ -14,7 +18,7 @@ class PostgresEmployeeDAO(EmployeeDAO):
         employee_record = cursor.fetchone()
         if employee_record:
             employee = Employee(*employee_record)
-            if employee.username == emp_username and employee.password == emp_password:
+            if employee.password == emp_password:
                 return employee
             else:
                 return False
@@ -23,7 +27,8 @@ class PostgresEmployeeDAO(EmployeeDAO):
 
 
 
-    # This method will be used with other methods to verify the employee exists.
+    # This method will be used with other methods to verify the employee exists. If the employee id pulls up an employee
+    # in the database it will return that employee object. If the id does not exist then the method will return false.
     def find_employee_per_id(self, emp_id: int):
         sql = 'select * from employee where employee_id = %s'
         cursor = connection.cursor()
@@ -38,16 +43,23 @@ class PostgresEmployeeDAO(EmployeeDAO):
 
 
 
+    # If the reimbursement amount is less than 1 then the method will return false. If the amount entered is greater
+    # than 0 then we search for the employee that is requesting the reimbursement. If they exist in the database then
+    # the values for the reimbursement will be entered and a new reimbursement request will be created. If the employee
+    # doesn't exist in the database then the method will return false.
     def submit_new_reimbursement(self, reimbursement: Reimbursement):
-        real_employee = self.find_employee_per_id(reimbursement.employee_id)
-        if real_employee and reimbursement.amount > 0:
-            sql = 'insert into reimbursement values(default, %s, %s, default, %s, default) returning reimburse_id'
-            cursor = connection.cursor()
-            cursor.execute(sql, (reimbursement.employee_id, reimbursement.amount, reimbursement.emp_reason))
-            reimburse_id = cursor.fetchone()[0]
-            reimbursement.reimburse_id = reimburse_id
-            connection.commit()
-            return reimbursement
+        if reimbursement.amount > 0:
+            real_employee = self.find_employee_per_id(reimbursement.employee_id)
+            if real_employee:
+                sql = 'insert into reimbursement values(default, %s, %s, default, %s, default) returning reimburse_id'
+                cursor = connection.cursor()
+                cursor.execute(sql, (reimbursement.employee_id, reimbursement.amount, reimbursement.emp_reason))
+                reimburse_id = cursor.fetchone()[0]
+                reimbursement.reimburse_id = reimburse_id
+                connection.commit()
+                return reimbursement
+            else:
+                return False
         else:
             return False
 

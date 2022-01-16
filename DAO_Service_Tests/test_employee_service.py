@@ -8,40 +8,51 @@ employee_service = PostgresEmployeeService(employee_dao)
 
 
 
-# def test_validate_employee_login():
-#     not_validated = employee_service.service_employee_login(6, "watevr")
-#     assert not_validated == False
-#
-#
-#
-# def test_validate_submit_new_reimbursement():
-#     try:
-#         wrong_reimburse_info = Reimbursement(0, 3, "More pencils", -20.10, "", '')
-#         employee_service.service_submit_new_reimbursement(wrong_reimburse_info)
-#     except InvalidAmountException as a:
-#         assert str(a) == "Reimbursement amounts must be greater than 0."
+# SERVICE TESTS FOR LOGGING IN
+def test_validate_employee_cant_login_with_incorrect_credentials():
+    try:
+        employee_service.service_employee_login('BeetFarmer', 'ILoveJim<3')
+        assert False
+    except CredentialsFalseException as c:
+        assert str(c) == "The username or password is incorrect!"
 
 
-def test_service_employee_login():
-    pass
+def test_validate_employee_cant_login_with_spaces():
+    try:
+        employee_service.service_employee_login('AngelaCat', 'ilovecats <3')
+        assert False
+    except SpacesException as s:
+        assert str(s) == "Spaces are not allowed in username or password."
 
 
-def test_service_find_employee_per_id():
-    pass
 
 
-def test_service_submit_new_reimbursement():
-    pass
+# SERVICE TESTS FOR EMPLOYEE EXISTENCE
+def test_validate_employee_id_doesnt_exist():
+    try:
+        employee_service.service_find_employee_per_id(200)
+        assert False
+    except NonExistentEmployeeException as n:
+        assert str(n) == "This employee does not exist!"
 
 
-def test_service_view_pending_emp_reimbursements():
-    pass
 
 
-def test_service_view_approved_emp_reimbursements():
-    pass
+# SERVICE TESTS FOR CREATING NEW REIMBURSEMENT
+def test_amount_requested_wrong_amount():
+    try:
+        wrong_amount = Reimbursement(0, 1, -32.19, '', 'Some staples and paper reams.', '')
+        employee_service.service_submit_new_reimbursement(wrong_amount)
+        assert False
+    except InvalidAmountException as i:
+        assert str(i) == "Your reimbursement request must be greater than zero dollars!"
 
 
-def test_service_view_denied_emp_reimbursements():
-    pass
+def test_validate_wrong_employee_id():
+    try:
+        wrong_emp_request = Reimbursement(0, 200, 103.89, '', 'Some staples and paper reams.', '')
+        employee_service.service_submit_new_reimbursement(wrong_emp_request)
+        assert False
+    except NonExistentEmployeeException as n:
+        assert str(n) == "This employee does not exist!"
 

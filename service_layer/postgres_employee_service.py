@@ -12,29 +12,43 @@ class PostgresEmployeeService(EmployeeService):
 
 
     def service_employee_login(self, emp_username: str, emp_password: str):
-        pass
+        if " " in emp_username or " " in emp_password:
+            raise SpacesException("Spaces are not allowed in username or password.")
+        else:
+            login = self.employee_dao.employee_login(emp_username, emp_password)
+            if not login:
+                raise CredentialsFalseException("The username or password is incorrect!")
+            else:
+                return login
 
 
 
     def service_find_employee_per_id(self, emp_id: int):
-        pass
+        employee = self.employee_dao.find_employee_per_id(emp_id)
+        if not employee:
+            raise NonExistentEmployeeException("This employee does not exist!")
+        else:
+            return employee
 
 
 
     def service_submit_new_reimbursement(self, reimbursement: Reimbursement):
-        pass
+        if reimbursement.amount < 1:
+            raise InvalidAmountException("Your reimbursement request must be greater than zero dollars!")
+        elif not self.service_find_employee_per_id(reimbursement.employee_id):
+            raise NonExistentEmployeeException("This employee does not exist!")
+        else:
+            return self.employee_dao.submit_new_reimbursement(reimbursement)
 
 
 
     def service_view_pending_emp_reimbursements(self, emp_id: int):
-        pass
-
+        return self.employee_dao.view_pending_emp_reimbursements(emp_id)
 
 
     def service_view_approved_emp_reimbursements(self, emp_id: int):
-        pass
-
+        return self.employee_dao.view_approved_emp_reimbursements(emp_id)
 
 
     def service_view_denied_emp_reimbursements(self, emp_id: int):
-        pass
+        return self.employee_dao.view_denied_emp_reimbursements(emp_id)

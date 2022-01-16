@@ -7,6 +7,10 @@ from database_connection import connection
 
 class PostgresManagerDAO(ManagerDAO):
 
+    # If the username entered does not exist in the database the method will return false. If the username exists it
+    # will pull up the credentials for that manager. If the password entered does not match the password for that
+    # manager the method will return false. If the username and password are correct and correlated to the same manager
+    # then the manager object will be returned.
     def manager_login(self, manager_username: str, manager_password: str):
         sql = 'select * from manager where username = %s'
         cursor = connection.cursor()
@@ -14,7 +18,7 @@ class PostgresManagerDAO(ManagerDAO):
         manager_record = cursor.fetchone()
         if manager_record:
             manager = Manager(*manager_record)
-            if manager.username == manager_username and manager.password == manager_password:
+            if manager.password == manager_password:
                 return manager
             else:
                 return False
@@ -32,14 +36,13 @@ class PostgresManagerDAO(ManagerDAO):
         pending_list = []
         for reimburse in pending_reimbursements:
             pending_list.append(Reimbursement(*reimburse))
-        if len(pending_list) > 0:
-            return pending_list
-        else:
-            return False
+        return pending_list
 
 
 
-
+    # Iterate through the pending reimbursements and if the reimburse id is found in the pending reimbursements then
+    # update the reimbursement with the status approved and a message/reason from the manager. Otherwise it will return
+    # with the status of None.
     def approve_reimbursement(self, reimburse_id: int, reason: str):
         pending_reimbursements = self.all_pending_reimbursements()
         for pr in pending_reimbursements:
@@ -54,7 +57,9 @@ class PostgresManagerDAO(ManagerDAO):
 
 
 
-
+    # Iterate through the pending reimbursements and if the reimburse id is found in the pending reimbursements then
+    # update the reimbursement with the status denied and a message/reason from the manager. Otherwise it will return
+    # with the status of None.
     def deny_reimbursement(self, reimburse_id: int, reason: str):
         pending_reimbursements = self.all_pending_reimbursements()
         for pr in pending_reimbursements:
@@ -78,10 +83,7 @@ class PostgresManagerDAO(ManagerDAO):
         approved_list = []
         for reimburse in approved_reimbursements:
             approved_list.append(Reimbursement(*reimburse))
-        if len(approved_list) > 0:
-            return approved_list
-        else:
-            return False
+        return approved_list
 
 
 
@@ -94,26 +96,7 @@ class PostgresManagerDAO(ManagerDAO):
         denied_list = []
         for reimburse in denied_reimbursements:
             denied_list.append(Reimbursement(*reimburse))
-        if len(denied_list) > 0:
-            return denied_list
-        else:
-            return False
-
-
-
-
-    def all_reimbursements_per_employee(self, emp_id: int):
-        sql = "select * from reimbursement where employee_id = %s"
-        cursor = connection.cursor()
-        cursor.execute(sql, [emp_id])
-        employee_reimbursements = cursor.fetchall()
-        emp_reimburse_list = []
-        for emp_reimburse in employee_reimbursements:
-            emp_reimburse_list.append(Reimbursement(*emp_reimburse))
-        if len(emp_reimburse_list) > 0:
-            return emp_reimburse_list
-        else:
-            return False
+        return denied_list
 
 
 
@@ -131,7 +114,26 @@ class PostgresManagerDAO(ManagerDAO):
 
 
 
-    # To show which employee has requested the highest dollar amount in reimbursements.
+    # Created a list of employees and iterating through them to make sure the inputted employee id exists, so that the
+    # reimbursements for that employee can be viewed (if they have any).
+    def all_reimbursements_per_employee(self, emp_id: int):
+        employee_list = self.view_all_employees()
+        for emp in employee_list:
+            if emp.employee_id == emp_id:
+                sql = "select * from reimbursement where employee_id = %s"
+                cursor = connection.cursor()
+                cursor.execute(sql, [emp_id])
+                employee_reimbursements = cursor.fetchall()
+                emp_reimburse_list = []
+                for emp_reimburse in employee_reimbursements:
+                    emp_reimburse_list.append(Reimbursement(*emp_reimburse))
+                return emp_reimburse_list
+
+
+
+
+    # Description of how this method works to get the employee that has the highest total of reimbursement requests and
+    # the actual total in a tuple.
     def highest_reimbursement_total(self):
         employee_list = self.view_all_employees()
         sum_list = []

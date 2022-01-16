@@ -10,6 +10,16 @@ class UnavailableException(Exception):
         self.message = message
 
 
-class WrongPasswordException(Exception):
+class CredentialsFalseException(Exception):
+    def __init__(self, message: str):
+        self.message = message
+
+
+class SpacesException(Exception):
+    def __init__(self, message: str):
+        self.message = message
+
+
+class NonExistentEmployeeException(Exception):
     def __init__(self, message: str):
         self.message = message
