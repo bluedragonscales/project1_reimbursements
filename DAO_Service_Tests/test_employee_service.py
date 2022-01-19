@@ -19,7 +19,7 @@ def test_validate_employee_cant_login_with_incorrect_credentials():
 
 def test_validate_employee_cant_login_with_spaces():
     try:
-        employee_service.service_employee_login('AngelaCat', 'ilovecats <3')
+        employee_service.service_employee_login('Angela Cat', 'ilovecats <3')
         assert False
     except SpacesException as s:
         assert str(s) == "Spaces are not allowed in username or password."

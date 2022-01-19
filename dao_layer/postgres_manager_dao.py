@@ -7,8 +7,9 @@ from database_connection import connection
 
 class PostgresManagerDAO(ManagerDAO):
 
+
     # If the username entered does not exist in the database the method will return false. If the username exists it
-    # will pull up the credentials for that manager. If the password entered does not match the password for that
+    # will pull up the information for that manager object. If the password entered does not match the password for that
     # manager the method will return false. If the username and password are correct and correlated to the same manager
     # then the manager object will be returned.
     def manager_login(self, manager_username: str, manager_password: str):
@@ -40,9 +41,10 @@ class PostgresManagerDAO(ManagerDAO):
 
 
 
+
     # Iterate through the pending reimbursements and if the reimburse id is found in the pending reimbursements then
-    # update the reimbursement with the status approved and a message/reason from the manager. Otherwise it will return
-    # with the status of None.
+    # update the reimbursement with the status approved and a reason from the manager. Otherwise it will return with the
+    # status of None.
     def approve_reimbursement(self, reimburse_id: int, reason: str):
         pending_reimbursements = self.all_pending_reimbursements()
         for pr in pending_reimbursements:
@@ -132,8 +134,12 @@ class PostgresManagerDAO(ManagerDAO):
 
 
 
-    # Description of how this method works to get the employee that has the highest total of reimbursement requests and
-    # the actual total in a tuple.
+    # This is to determine which employee has made the highest dollar amount in reimbursement requests. I first create
+    # a list of employees and initialize a list where each of the total sums for each employee will go. Iterating
+    # through the list of employees, for each employee we use the sql statement to get their total in reimbursement
+    # requests. Then I append that total to the sum list. I store the highest sum in the variable "highest sum" and get
+    # the index (the employee id) the highest sum was found at. I store those two items inside of a tuple and pass that
+    # tuple out of the method.
     def highest_reimbursement_total(self):
         employee_list = self.view_all_employees()
         sum_list = []
@@ -150,7 +156,14 @@ class PostgresManagerDAO(ManagerDAO):
 
 
 
-    # To show which employee has made the most reimbursement requests.
+
+
+    # This is to determine which employee has made the most reimbursement requests. I first create a list of employees
+    # and initialize a list where each of the total count for each employee will go. Iterating through the list of
+    # employees, for each employee we use the sql statement to get their total reimbursement request count. Then I
+    # append that total to the count list. I store the highest count in the variable "highest_count" and get the index
+    # (the employee id) the highest count was found at. I store those two items inside of a tuple and pass that tuple
+    # out of the method.
     def all_requests_per_employee(self):
         employee_list = self.view_all_employees()
         count_list = []
@@ -167,7 +180,7 @@ class PostgresManagerDAO(ManagerDAO):
 
 
 
-    # To show the total dollar amount of all reimbursements approved.
+    # I get the total dollar amount of all reimbursements that were already approved.
     def dollar_total_of_approved_reimbursements(self):
         sql = "select sum(amount) from reimbursement where status = 'Approved'"
         cursor = connection.cursor()
@@ -177,7 +190,14 @@ class PostgresManagerDAO(ManagerDAO):
 
 
 
-    # To show which employee has the most denials.
+
+
+    # This is to determine which employee has been denied the most. I first create a list of employees and initialize a
+    # list where each of the total denial count for each employee will go. Iterating through the list of employees, for
+    # each employee we use the sql statement to get their total reimbursement denial count. Then I append that total to
+    # the denials list. I store the highest denial count in the variable "highest_denials" and get the index (the
+    # employee id) the highest denial count was found at. I store those two items inside of a tuple and pass that tuple
+    # out of the method.
     def employee_with_most_denials(self):
         employee_list = self.view_all_employees()
         denials_list = []
@@ -195,7 +215,14 @@ class PostgresManagerDAO(ManagerDAO):
 
 
 
-    # To show which employee has the most approvals.
+
+
+    # This is to determine which employee has been approved the most. I first create a list of employees and initialize
+    # a list where the total approval count for each employee will go. Iterating through the list of employees, for each
+    # employee we use the sql statement to get their total reimbursement approval count. Then I append that total to the
+    # approvals list. I store the highest approval count in the variable "highest_approvals" and get the index (the
+    # employee id) the highest approval count was found at. I store those two items inside of a tuple and pass that
+    # tuple out of the method.
     def employee_with_most_approvals(self):
         employee_list = self.view_all_employees()
         approvals_list = []

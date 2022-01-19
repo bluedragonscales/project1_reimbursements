@@ -43,7 +43,7 @@ class PostgresEmployeeDAO(EmployeeDAO):
 
 
 
-    # If the reimbursement amount is less than 1 then the method will return false. If the amount entered is greater
+    # If the reimbursement amount is 0 or less then the method will return false. If the amount entered is greater
     # than 0 then we search for the employee that is requesting the reimbursement. If they exist in the database then
     # the values for the reimbursement will be entered and a new reimbursement request will be created. If the employee
     # doesn't exist in the database then the method will return false.

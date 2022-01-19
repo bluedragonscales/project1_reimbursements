@@ -33,12 +33,12 @@ def test_view_pending_reimbursements_happy():
 # APPROVE REIMBURSEMENT TESTS
 def test_approve_reimbursement_happy():
     # Pass if the reimbursement request is NOT already approved or denied.
-    approved = manager_dao.approve_reimbursement(22, 'It better be the good kind.')
+    approved = manager_dao.approve_reimbursement(30, 'It better be the good kind.')
     assert approved == 'Approved'
 
 def test_approve_reimbursement_sad():
     # Pass if the reimbursement request IS already approved or denied.
-    cant_approve = manager_dao.approve_reimbursement(3, 'Test is not working.')
+    cant_approve = manager_dao.approve_reimbursement(19, 'Test is not working.')
     assert cant_approve is None
 
 
@@ -46,12 +46,12 @@ def test_approve_reimbursement_sad():
 # DENY REIMBURSEMENT TESTS
 def test_deny_reimbursement_happy():
     # Pass if the reimbursement request is NOT already approved or denied.
-    denied = manager_dao.deny_reimbursement(24, "We never got any. What is that stain?")
+    denied = manager_dao.deny_reimbursement(28, "No cats in the office!")
     assert denied == 'Denied'
 
 def test_deny_reimbursement_sad():
     # Pass if the reimbursement request IS already approved or denied.
-    denied = manager_dao.deny_reimbursement(2, "Test did not work")
+    denied = manager_dao.deny_reimbursement(17, "Test did not work")
     assert denied is None
 
 
@@ -62,14 +62,10 @@ def test_view_approved_requests_happy():
     assert len(approved_list) >= 0
 
 
-
 # VIEW DENIED REIMBURSEMENTS TEST
 def test_view_denied_requests_happy():
-    # If there is at least one denied request.
     denied_list = manager_dao.view_denied_requests()
     assert len(denied_list) >= 0
-
-
 
 
 # VIEW ALL EMPLOYEES TEST

@@ -22,6 +22,8 @@ def test_employee_login_wrong_username_sad():
     assert employee == False
 
 
+
+
 # FIND EMPLOYEE TESTS
 def test_find_employee_by_id_happy():
     # Pass if employee exists.
@@ -31,6 +33,7 @@ def test_find_employee_by_id_sad():
     # Pass if employee does not exist.
     employee = employee_dao.find_employee_per_id(100)
     assert employee == False
+
 
 
 
@@ -47,6 +50,14 @@ def test_new_reimbursement_with_wrong_amount_sad():
     another_reimbursement = employee_dao.submit_new_reimbursement(create_reimbursement)
     assert another_reimbursement == False
 
+
+def test_new_reimbursement_with_zero_amount_sad():
+    # Pass if a zero amount is requested.
+    create_reimbursement = Reimbursement(0, 100, 0, '', 'Some staples and paper reams.', '')
+    another_reimbursement = employee_dao.submit_new_reimbursement(create_reimbursement)
+    assert another_reimbursement == False
+
+
 def test_new_reimbursement_with_wrong_id_sad():
     # Pass if the employee id does not exist.
     create_reimbursement = Reimbursement(0, 200, 103.89, '', 'Some staples and paper reams.', '')
@@ -55,24 +66,20 @@ def test_new_reimbursement_with_wrong_id_sad():
 
 
 
+
 # PENDING REIMBURSEMENTS TEST
 def test_view_pending_reimbursements_happy():
-    # Pass if employee exists.
     pending_list = employee_dao.view_pending_emp_reimbursements(2)
     assert len(pending_list) >= 0
 
 
-
 # APPROVED REIMBURSEMENTS TEST
 def test_view_approved_reimbursements_happy():
-    # Pass if employee exists.
     approved_list = employee_dao.view_approved_emp_reimbursements(3)
     assert len(approved_list) >= 0
 
 
-
 # DENIED REIMBURSEMENTS TEST
 def test_view_denied_reimbursements_happy():
-    # Pass if employee exists.
     denied_list = employee_dao.view_denied_emp_reimbursements(4)
     assert len(denied_list) >= 0

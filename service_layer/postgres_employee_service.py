@@ -11,6 +11,10 @@ class PostgresEmployeeService(EmployeeService):
 
 
 
+    # If the username and/or password passed in from the front end has spaces, a custom exception "SpacesException" will
+    # be raised. Else, if the credentials have no spaces but are still incorrect then a custom exception called
+    # CredentialsFalseException will be raised. If all credentials are correct and without spaces then the employee
+    # object will be returned.
     def service_employee_login(self, emp_username: str, emp_password: str):
         if " " in emp_username or " " in emp_password:
             raise SpacesException("Spaces are not allowed in username or password.")
@@ -23,6 +27,8 @@ class PostgresEmployeeService(EmployeeService):
 
 
 
+    # If no employee is found after going through the list of employees then a custom exception will be raised called
+    # NonExistentEmployeeException. Else, if the employee is found then the employee object will be returned.
     def service_find_employee_per_id(self, emp_id: int):
         employee = self.employee_dao.find_employee_per_id(emp_id)
         if not employee:
@@ -32,6 +38,10 @@ class PostgresEmployeeService(EmployeeService):
 
 
 
+    # If the amount of the submitted reimbursement is less than 1 a custom exception will be raised called
+    # InvalidAmountException. Else if, the employee is not found in the employee list, then the
+    # NonExistentEmployeeException will be raised. Otherwise, if those problems are not run into then the new
+    # reimbursement object will be sent on to the dao layer and database.
     def service_submit_new_reimbursement(self, reimbursement: Reimbursement):
         if reimbursement.amount < 1:
             raise InvalidAmountException("Your reimbursement request must be greater than zero dollars!")

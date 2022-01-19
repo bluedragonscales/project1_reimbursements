@@ -9,54 +9,89 @@ class PostgresManagerService(ManagerService):
     def __init__(self, manager_dao):
         self.manager_dao: PostgresManagerDAO = manager_dao
 
-
+    # If the username and/or password passed in from the front end has spaces, a custom exception "SpacesException" will
+    # be raised. Else, if the credentials have no spaces but are still incorrect then a custom exception called
+    # CredentialsFalseException will be raised. If all credentials are correct and without spaces then the manager
+    # object will be returned.
     def service_manager_login(self, manager_username: str, manager_password: str):
-        pass
+        if " " in manager_username or " " in manager_password:
+            raise SpacesException("Spaces are not allowed in username or password.")
+        else:
+            login = self.manager_dao.manager_login(manager_username, manager_password)
+            if not login:
+                raise CredentialsFalseException("The username or password is incorrect!")
+            else:
+                return login
 
-    # Be able to view all reimbursements that are pending.
+
+
+
     def service_all_pending_reimbursements(self):
-        pass
+        return self.manager_dao.all_pending_reimbursements()
 
-    # Be able to approve a reimbursement request made by an employee and give a reason.
+
+
+    # First, try to approve the reimbursement through the dao method. If the return value is None then raise the
+    # custom exception NoLongerPendingException. If the return value from the dao method is "Approved" then the approval
+    # works.
     def service_approve_reimbursement(self, reimburse_id: int, reason: str):
-        pass
+        try_to_approve = self.manager_dao.approve_reimbursement(reimburse_id, reason)
+        if try_to_approve is None:
+            raise NoLongerPendingException("This reimbursement was already approved or denied!")
+        else:
+            return try_to_approve
 
-    # Be able to deny a reimbursement request made by an employee and give a reason.
+
+
+    # First, try to deny the reimbursement through the dao method. If the return value is None then raise the custom
+    # exception NoLongerPendingException. If the return value from the dao method is "Denied" then the denial worked.
     def service_deny_reimbursement(self, reimburse_id: int, reason: str):
-        pass
+        try_to_deny = self.manager_dao.deny_reimbursement(reimburse_id, reason)
+        if try_to_deny is None:
+            raise NoLongerPendingException("This reimbursement was already approved or denied!")
+        else:
+            return try_to_deny
 
-    # Be able to view all past approved reimbursement requests.
+
+
+
     def service_view_approved_requests(self):
-        pass
+        return self.manager_dao.view_approved_requests()
 
-    # Be able to view all past denied reimbursement requests.
     def service_view_denied_requests(self):
-        pass
+        return self.manager_dao.view_denied_requests()
 
-    # To see all reimbursements for each employee individually.
-    def service_all_reimbursements_per_employee(self, emp_id: int):
-        pass
-
-    # To get an employee list for functionality.
     def service_view_all_employees(self) -> list[Employee]:
-        pass
+        return self.manager_dao.view_all_employees()
 
-    # To show which employee has requested the highest dollar total in reimbursements.
+
+
+
+    # Create the list of employees and iterate through them. If one of the employee ids in the list matches the id that
+    # was passed into the method then return all the reimbursements for that employee. Otherwise, raise a custom
+    # exception NonExistentEmployeeException.
+    def service_all_reimbursements_per_employee(self, emp_id: int):
+        employee_list = self.manager_dao.view_all_employees()
+        for emp in employee_list:
+            if emp.employee_id == emp_id:
+                return self.manager_dao.all_reimbursements_per_employee(emp_id)
+            else:
+                raise NonExistentEmployeeException("This employee does not exist!")
+
+
+
+
     def service_highest_reimbursement_total(self):
-        pass
+        return self.manager_dao.highest_reimbursement_total()
 
-    # To show which employee has made the most reimbursement requests.
     def service_all_requests_per_employee(self):
-        pass
+        return self.manager_dao.all_requests_per_employee()
 
-    # To show the total dollar amount of all reimbursements approved.
     def service_dollar_total_of_approved_reimbursements(self):
-        pass
+        return self.manager_dao.dollar_total_of_approved_reimbursements()
 
-    # To show which employee has the most denials.
     def service_employee_with_most_denials(self):
-        pass
+        return self.manager_dao.employee_with_most_denials()
 
-    # To show which employee has the most approvals.
     def service_employee_with_most_approvals(self):
-        pass
+        return self.manager_dao.employee_with_most_approvals()

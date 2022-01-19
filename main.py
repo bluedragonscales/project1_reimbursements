@@ -1,8 +1,3 @@
-# This main module is where all the routes are crafted. They are set up so that they pass information back and forth in
-# a form that the front end can read and process. These routes are for everything needed from the employee modules and
-# the manager modules.
-
-# IMPORTS
 from flask import Flask, request, jsonify
 from a_entities.reimbursement import Reimbursement
 from dao_layer.postgres_employee_dao import PostgresEmployeeDAO
