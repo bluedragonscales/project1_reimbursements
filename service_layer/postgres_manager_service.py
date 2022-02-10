@@ -71,12 +71,11 @@ class PostgresManagerService(ManagerService):
     # was passed into the method then return all the reimbursements for that employee. Otherwise, raise a custom
     # exception NonExistentEmployeeException.
     def service_all_reimbursements_per_employee(self, emp_id: int):
-        employee_list = self.manager_dao.view_all_employees()
-        for emp in employee_list:
-            if emp.employee_id == emp_id:
-                return self.manager_dao.all_reimbursements_per_employee(emp_id)
-            else:
-                raise NonExistentEmployeeException("This employee does not exist!")
+        employee_list = self.manager_dao.all_reimbursements_per_employee(emp_id)
+        if not employee_list:
+            raise NonExistentEmployeeException("This employee does not exist!")
+        else:
+            return self.manager_dao.all_reimbursements_per_employee(emp_id)
 
 
 

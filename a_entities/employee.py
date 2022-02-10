@@ -9,7 +9,7 @@ class Employee:
         self.password = password
 
 
-    def reimbursement_dictionary(self):
+    def employee_dictionary(self):
         return {
             "employeeId" : self.employee_id,
             "managerId" : self.manager_id,

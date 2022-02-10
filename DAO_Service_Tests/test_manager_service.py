@@ -47,7 +47,7 @@ def test_validate_request_already_denied():
 # REIMBURSEMENTS PER EMPLOYEE TEST
 def test_validate_employee_doesnt_exist_so_cant_get_requests():
     try:
-        manager_service.service_all_reimbursements_per_employee(200)
+        manager_service.service_all_reimbursements_per_employee(400)
         assert False
     except NonExistentEmployeeException as e:
         assert str(e) == "This employee does not exist!"

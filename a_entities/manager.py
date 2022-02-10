@@ -8,7 +8,7 @@ class Manager:
         self.password = password
 
 
-    def reimbursement_dictionary(self):
+    def manager_dictionary(self):
         return {
             "managerId" : self.manager_id,
             "fullName" : self.full_name,

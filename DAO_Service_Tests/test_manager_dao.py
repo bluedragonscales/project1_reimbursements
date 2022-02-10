@@ -33,7 +33,7 @@ def test_view_pending_reimbursements_happy():
 # APPROVE REIMBURSEMENT TESTS
 def test_approve_reimbursement_happy():
     # Pass if the reimbursement request is NOT already approved or denied.
-    approved = manager_dao.approve_reimbursement(30, 'It better be the good kind.')
+    approved = manager_dao.approve_reimbursement(32, 'It better be the good kind.')
     assert approved == 'Approved'
 
 def test_approve_reimbursement_sad():
@@ -46,7 +46,7 @@ def test_approve_reimbursement_sad():
 # DENY REIMBURSEMENT TESTS
 def test_deny_reimbursement_happy():
     # Pass if the reimbursement request is NOT already approved or denied.
-    denied = manager_dao.deny_reimbursement(28, "No cats in the office!")
+    denied = manager_dao.deny_reimbursement(27, "No cats in the office!")
     assert denied == 'Denied'
 
 def test_deny_reimbursement_sad():
@@ -84,7 +84,7 @@ def test_all_reimbursements_per_employee_happy():
 def test_all_reimbursements_per_employee_sad():
     # Pass if employee does not exist.
     emp_reimburse_list = manager_dao.all_reimbursements_per_employee(200)
-    assert emp_reimburse_list is None
+    assert emp_reimburse_list is False
 
 
 
@@ -100,7 +100,7 @@ def test_all_requests_per_employee_happy():
 
 def test_dollar_total_of_approved_reimbursements_happy():
     sum_approved = manager_dao.dollar_total_of_approved_reimbursements()
-    assert sum_approved >= 1579.09
+    assert sum_approved >= 1.99
 
 def test_employee_with_most_denials_happy():
     count_denials = manager_dao.employee_with_most_denials()

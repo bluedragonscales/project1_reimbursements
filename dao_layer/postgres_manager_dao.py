@@ -119,17 +119,17 @@ class PostgresManagerDAO(ManagerDAO):
     # Created a list of employees and iterating through them to make sure the inputted employee id exists, so that the
     # reimbursements for that employee can be viewed (if they have any).
     def all_reimbursements_per_employee(self, emp_id: int):
-        employee_list = self.view_all_employees()
-        for emp in employee_list:
-            if emp.employee_id == emp_id:
-                sql = "select * from reimbursement where employee_id = %s"
-                cursor = connection.cursor()
-                cursor.execute(sql, [emp_id])
-                employee_reimbursements = cursor.fetchall()
-                emp_reimburse_list = []
-                for emp_reimburse in employee_reimbursements:
-                    emp_reimburse_list.append(Reimbursement(*emp_reimburse))
-                return emp_reimburse_list
+        sql = "select * from reimbursement where employee_id = %s"
+        cursor = connection.cursor()
+        cursor.execute(sql, [emp_id])
+        employee_reimbursements = cursor.fetchall()
+        if employee_reimbursements:
+            emp_reimburse_list = []
+            for emp_reimburse in employee_reimbursements:
+                emp_reimburse_list.append(Reimbursement(*emp_reimburse))
+            return emp_reimburse_list
+        else:
+            return False
 
 
 

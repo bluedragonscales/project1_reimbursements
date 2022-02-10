@@ -21,13 +21,18 @@ def test_employee_login_wrong_username_sad():
     employee = employee_dao.employee_login('BetFrmer', 'IambetterthanJim')
     assert employee == False
 
+def test_employee_login_mismatched_credentials_sad():
+    # Pass if username and password are correct, but mismatched with the wrong people.
+    employee = employee_dao.employee_login('BeetFarmer', 'ilovecookies<3')
+    assert employee == False
 
 
 
 # FIND EMPLOYEE TESTS
 def test_find_employee_by_id_happy():
     # Pass if employee exists.
-    assert employee_dao.find_employee_per_id(2)
+    found_employee = employee_dao.find_employee_per_id(2)
+    assert found_employee.full_name == 'Jim Halpert'
 
 def test_find_employee_by_id_sad():
     # Pass if employee does not exist.
