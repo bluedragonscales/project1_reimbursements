@@ -1,3 +1,5 @@
+import pytest
+
 from dao_layer.postgres_manager_dao import PostgresManagerDAO
 from service_layer.custom_exceptions import *
 from service_layer.postgres_manager_service import PostgresManagerService
@@ -8,11 +10,9 @@ manager_service = PostgresManagerService(manager_dao)
 
 # SERVICE LOGIN TESTS
 def test_validate_manager_cant_login_with_incorrect_credentials():
-    try:
+    with pytest.raises(CredentialsFalseException):
         manager_service.service_manager_login('agentscarn', 'office123')
-        assert False
-    except CredentialsFalseException as c:
-        assert str(c) == "The username or password is incorrect!"
+
 
 
 def test_validate_manager_cant_login_with_spaces():

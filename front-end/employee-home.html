@@ -39,7 +39,7 @@
       <div class="request-reimbursement">
         <textarea id="purpose" rows="2" cols="50" maxlength="200" placeholder="Reason for the reimbursement request"></textarea>
         <input type="number" placeholder="Amount" id="amount" min="1">
-        <input type="submit" class="submit-button" id="r-submit" onclick="createReimbursement();">
+        <input type="submit" class="submit-button" id="r-submit">
         <h3 id="request-created"></h3>
       </div>
     </section>
@@ -50,11 +50,10 @@
       <div class="view-reimbursements">
         <table id="reimburse-table">
           <thead>
-            <th>Reimbursement Id</th>
-            <th>Request Purpose</th>
+            <th>Purpose</th>
             <th>Amount</th>
             <th>Status</th>
-            <th>Reason</th>
+            <th>Manager Response</th>
           </thead>
           <tbody id="r-body">
           </tbody>

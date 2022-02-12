@@ -69,11 +69,9 @@ def submit_new_reimbursement():
 
 
 
-@app.get("/employee/pending")
-def view_pending_emp_reimbursements():
-    id_body = request.get_json()
-    emp_id = id_body["employeeId"]
-    rb_pending_results = employee_service.service_view_pending_emp_reimbursements(int(emp_id))
+@app.get("/employee/pending/<employee_id>")
+def view_pending_emp_reimbursements(employee_id: str):
+    rb_pending_results = employee_service.service_view_pending_emp_reimbursements(int(employee_id))
     pending_results_as_dictionary = []
     for rb in rb_pending_results:
         dictionary_of_pending = rb.reimbursement_dictionary()
@@ -82,11 +80,9 @@ def view_pending_emp_reimbursements():
 
 
 
-@app.get("/employee/approved")
-def view_approved_emp_reimbursements():
-    id_body = request.get_json()
-    emp_id = id_body["employeeId"]
-    rb_approved_results = employee_service.service_view_approved_emp_reimbursements(int(emp_id))
+@app.get("/employee/approved/<employee_id>")
+def view_approved_emp_reimbursements(employee_id: str):
+    rb_approved_results = employee_service.service_view_approved_emp_reimbursements(int(employee_id))
     approved_results_as_dictionary = []
     for rb in rb_approved_results:
         dictionary_of_approvals = rb.reimbursement_dictionary()
@@ -95,11 +91,9 @@ def view_approved_emp_reimbursements():
 
 
 
-@app.get("/employee/denied")
-def view_denied_emp_reimbursements():
-    id_body = request.get_json()
-    emp_id = id_body["employeeId"]
-    rb_denied_results = employee_service.service_view_denied_emp_reimbursements(int(emp_id))
+@app.get("/employee/denied/<employee_id>")
+def view_denied_emp_reimbursements(employee_id: str):
+    rb_denied_results = employee_service.service_view_denied_emp_reimbursements(int(employee_id))
     denied_results_as_dictionary = []
     for rb in rb_denied_results:
         dictionary_of_denied = rb.reimbursement_dictionary()

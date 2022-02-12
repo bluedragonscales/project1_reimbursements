@@ -62,4 +62,5 @@ button {
   font-size: 1.3rem;
   font-weight: bolder;
   margin: 0 10rem;
+  border-radius: 10px;
 }

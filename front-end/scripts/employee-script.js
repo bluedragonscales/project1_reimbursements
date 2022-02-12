@@ -20,26 +20,40 @@ function openTab(evt, tabName) {
 
 
 // TO CREATE A NEW REIMBURSEMENT.
+const newReimburseButton = document.getElementById("r-submit");
+newReimburseButton.addEventListener("click", createReimbursement);
+let requestMessage = document.getElementById("request-created");
+
 async function createReimbursement(){
   let requestLabel = document.getElementById("purpose");
   let amount = document.getElementById("amount");
-  const submitReimburseRoute = "http://127.0.0.1:5000/employee/reimbursement";
-  let response = await fetch(submitReimburseRoute, {headers:{'Content-Type': 'application/json'},
-                            method:["POST"], body:JSON.stringify({"reimburseId": 0, "employeeId": sessionStorage.getItem("valueEmp"),
-                            "requestLabel": requestLabel.value,
-                            "amount": amount.value, "status": "", "reason": ""}) });
-  if(response.status == 200){
+
+  if(requestLabel.value == "" || amount.value == "") {
+    requestMessage.textContent = 'Please fill out both fields.'
+  }
+  else {
+    const submitReimburseRoute = "http://127.0.0.1:5000/employee/reimbursement";
+
+    let response = await fetch(submitReimburseRoute, {headers:{'Content-Type':'application/json'}, method:["POST"], body:JSON.stringify({
+                          reimburseId: 0, 
+                          employeeId: sessionStorage.getItem("valueEmp"),
+                          amount: amount.value, 
+                          status: "", 
+                          empReason: requestLabel.value,
+                          managerReason: ""}) 
+                        });
+    
     let createBody = await response.json();
-    let requestMessage = document.getElementById("request-created");
-    if(amount.value > 0){
+
+    if(response.status == 201){
       requestLabel.value = ``;
       amount.value = ``;
       requestMessage.textContent = `Your request has been submitted.`;
-    } else {
-      requestMessage.textContent = `Your request to submit has failed.`;
-    };
-  } else {
-    requestMessage.textContent = `Your request to submit has failed.`;
+    } 
+    else {
+      let error = createBody.Message;
+      requestMessage.textContent = error;
+    }
   }
 };
 
@@ -47,19 +61,23 @@ async function createReimbursement(){
 
 
 // TO VIEW PENDING REIMBURSEMENT DATA
-// To activate the pending tab on the website.
+let empId = sessionStorage.getItem("valueEmp");
 let pendingButton = document.getElementById("pending");
 pendingButton.addEventListener("click", getPendingData);
 
 async function getPendingData(){
   // tableBody.innerHTML = ``;
   const pendingRoute = "http://127.0.0.1:5000/employee/pending/";
-  // Fetching the information from the route.
-  let response = await fetch(pendingRoute + sessionStorage.getItem("valueEmp"));
+
+  let response = await fetch(pendingRoute + empId);
+
+  let pendingBody = await response.json();
+  console.log(pendingBody);
+
   if(response.status == 200){
-    let pBody = await response.json();
-    populateReimburseData(pBody);
-  } else {
+    populateReimburseData(pendingBody);
+  } 
+  else {
     alert("Could not retrieve reimbursement data!")
   }
 };
@@ -68,21 +86,21 @@ async function getPendingData(){
 
 // TO VIEW APPROVED REIMBURSEMENT DATA
 // To activate the approved tab on the website.
-let approvedButton = document.getElementById("approved");
-button.addEventListener("click", getApprovedData);
+// let approvedButton = document.getElementById("approved");
+// // button.addEventListener("click", getApprovedData);
 
-async function getApprovedData(){
-  // tableBody.innerHTML = ``;
-  const approvedRoute = "http://127.0.0.1:5000/employee/approved/";
-  // Fetching the information from the route.
-  let response = await fetch(approvedRoute + sessionStorage.getItem("valueEmp"));
-  if(response.status == 200){
-    let aBody = await response.json();
-    populateReimburseData(aBody);
-  } else {
-    alert("Could not retrieve reimbursement data!")
-  }
-};
+// async function getApprovedData(){
+//   // tableBody.innerHTML = ``;
+//   const approvedRoute = "http://127.0.0.1:5000/employee/approved/";
+//   // Fetching the information from the route.
+//   let response = await fetch(approvedRoute + sessionStorage.getItem("valueEmp"));
+//   if(response.status == 200){
+//     let aBody = await response.json();
+//     populateReimburseData(aBody);
+//   } else {
+//     alert("Could not retrieve reimbursement data!")
+//   }
+// };
 
 
 
@@ -90,35 +108,34 @@ async function getApprovedData(){
 
 // TO VIEW DENIED REIMBURSEMENT DATA
 // To activate the denied tab on the website.
-let deniedButton = document.getElementById("denied");
-button.addEventListener("click", getDeniedData);
+// let deniedButton = document.getElementById("denied");
+// button.addEventListener("click", getDeniedData);
 
-async function getDeniedData(){
-  // tableBody.innerHTML = ``;
-  const deniedRoute = "http://127.0.0.1:5000/employee/denied/";
-  // Fetching the information from the route.
-  let response = await fetch(deniedRoute + sessionStorage.getItem("valueEmp"));
-  if(response.status == 200){
-    let dBody = await response.json();
-    populateReimburseData(dBody);
-  } else {
-    alert("Could not retrieve reimbursement data!")
-  }
-};
+// async function getDeniedData(){
+//   // tableBody.innerHTML = ``;
+//   const deniedRoute = "http://127.0.0.1:5000/employee/denied/";
+//   // Fetching the information from the route.
+//   let response = await fetch(deniedRoute + sessionStorage.getItem("valueEmp"));
+//   if(response.status == 200){
+//     let dBody = await response.json();
+//     populateReimburseData(dBody);
+//   } else {
+//     alert("Could not retrieve reimbursement data!")
+//   }
+// };
 
 
 
 
 
 // TO POPULATE THE TABLE DATA
-// This grabs the tables and table bodies so that we can populate data into them.
 const table = document.getElementById("reimburse-table");
 const tableBody = document.getElementById("r-body");
 
 function populateReimburseData(jsonBody){
   for(let rb of jsonBody){
     let tableRow = document.createElement("tr");
-    tableRow.innerHTML = `<td>${rb.reimburseId}</td><td>${rb.requestLabel}</td><td>$${rb.amount}</td><td>${rb.status}</td><td>${rb.reason}</td>`;
+    tableRow.innerHTML = `<td>${rb.empReason}</td><td>$${rb.amount}</td><td>${rb.status}</td><td>${rb.managerReason}</td>`;
     tableBody.appendChild(tableRow);
   };
 };
