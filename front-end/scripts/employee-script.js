@@ -60,22 +60,55 @@ async function createReimbursement(){
 
 
 
-// TO VIEW PENDING REIMBURSEMENT DATA
 let empId = sessionStorage.getItem("valueEmp");
+
+
+// TO VIEW PENDING REIMBURSEMENT DATA
+const pendingTableBody = document.getElementById("r-body-p");
 let pendingButton = document.getElementById("pending");
 pendingButton.addEventListener("click", getPendingData);
 
 async function getPendingData(){
-  // tableBody.innerHTML = ``;
+  pendingTableBody.innerHTML = ``;
   const pendingRoute = "http://127.0.0.1:5000/employee/pending/";
 
   let response = await fetch(pendingRoute + empId);
-
   let pendingBody = await response.json();
-  console.log(pendingBody);
 
   if(response.status == 200){
-    populateReimburseData(pendingBody);
+    populatePendingData(pendingBody);
+  } 
+  else {
+    alert("Could not retrieve reimbursement data!")
+  };
+};
+
+
+// TO POPULATE THE PENDING REIMBURSEMENTS
+function populatePendingData(jsonBody){
+  for(let rb of jsonBody){
+    let tableRow = document.createElement("tr");
+    tableRow.innerHTML = `<td>${rb.empReason}</td><td>$${rb.amount}</td><td>${rb.status}</td><td>${rb.managerReason}</td>`;
+    pendingTableBody.appendChild(tableRow);
+  };
+};
+
+
+
+// TO VIEW APPROVED REIMBURSEMENT DATA
+const approvedTableBody = document.getElementById("r-body-a");
+let approvedButton = document.getElementById("approved");
+approvedButton.addEventListener("click", getApprovedData);
+
+async function getApprovedData(){
+  approvedTableBody.innerHTML = ``;
+  const approvedRoute = "http://127.0.0.1:5000/employee/approved/";
+
+  let response = await fetch(approvedRoute + empId);
+  let approvedBody = await response.json();
+
+  if(response.status == 200){
+    populateApprovedData(approvedBody);
   } 
   else {
     alert("Could not retrieve reimbursement data!")
@@ -83,64 +116,48 @@ async function getPendingData(){
 };
 
 
-
-// TO VIEW APPROVED REIMBURSEMENT DATA
-// To activate the approved tab on the website.
-// let approvedButton = document.getElementById("approved");
-// // button.addEventListener("click", getApprovedData);
-
-// async function getApprovedData(){
-//   // tableBody.innerHTML = ``;
-//   const approvedRoute = "http://127.0.0.1:5000/employee/approved/";
-//   // Fetching the information from the route.
-//   let response = await fetch(approvedRoute + sessionStorage.getItem("valueEmp"));
-//   if(response.status == 200){
-//     let aBody = await response.json();
-//     populateReimburseData(aBody);
-//   } else {
-//     alert("Could not retrieve reimbursement data!")
-//   }
-// };
+// TO POPULATE THE APPROVED DATA
+function populateApprovedData(jsonBody) {
+  for(let rb of jsonBody){
+    let tableRow = document.createElement("tr");
+    tableRow.innerHTML = `<td>${rb.empReason}</td><td>$${rb.amount}</td><td>${rb.status}</td><td>${rb.managerReason}</td>`;
+    approvedTableBody.appendChild(tableRow);
+  };
+};
 
 
 
 
 
 // TO VIEW DENIED REIMBURSEMENT DATA
-// To activate the denied tab on the website.
-// let deniedButton = document.getElementById("denied");
-// button.addEventListener("click", getDeniedData);
+const deniedTableBody = document.getElementById("r-body-d");
+let deniedButton = document.getElementById("denied");
+deniedButton.addEventListener("click", getDeniedData);
 
-// async function getDeniedData(){
-//   // tableBody.innerHTML = ``;
-//   const deniedRoute = "http://127.0.0.1:5000/employee/denied/";
-//   // Fetching the information from the route.
-//   let response = await fetch(deniedRoute + sessionStorage.getItem("valueEmp"));
-//   if(response.status == 200){
-//     let dBody = await response.json();
-//     populateReimburseData(dBody);
-//   } else {
-//     alert("Could not retrieve reimbursement data!")
-//   }
-// };
+async function getDeniedData(){
+  deniedTableBody.innerHTML = ``;
+  const deniedRoute = "http://127.0.0.1:5000/employee/denied/";
 
+  let response = await fetch(deniedRoute + empId);
+  let deniedBody = await response.json();
 
-
-
-
-// TO POPULATE THE TABLE DATA
-const table = document.getElementById("reimburse-table");
-const tableBody = document.getElementById("r-body");
-
-function populateReimburseData(jsonBody){
-  for(let rb of jsonBody){
-    let tableRow = document.createElement("tr");
-    tableRow.innerHTML = `<td>${rb.empReason}</td><td>$${rb.amount}</td><td>${rb.status}</td><td>${rb.managerReason}</td>`;
-    tableBody.appendChild(tableRow);
-  };
+  if(response.status == 200){
+    populateDeniedData(deniedBody);
+  } 
+  else {
+    alert("Could not retrieve reimbursement data!")
+  }
 };
 
 
+// TO POPULATE THE DENIED DATA
+function populateDeniedData(jsonBody){
+  for(let rb of jsonBody){
+    let tableRow = document.createElement("tr");
+    tableRow.innerHTML = `<td>${rb.empReason}</td><td>$${rb.amount}</td><td>${rb.status}</td><td>${rb.managerReason}</td>`;
+    deniedTableBody.appendChild(tableRow);
+  };
+};
 
 
 
