@@ -16,12 +16,12 @@
 
     <nav>
       <button id="home" class="tablink" onclick="openTab(event, 'home-r')">Home</button>
-      <button id="status" class="tablink" onclick="openTab(event, 'status-r');">Change Reimbursement Status</button>
       <button id="view" class="tablink" onclick="openTab(event, 'view-r');">Pending Reimbursements</button>
       <button id="past" class="tablink" onclick="openTab(event, 'past-r');">Past Reimbursements</button>
       <button id="stats" class="tablink" onclick="openTab(event, 'statistics');">View Reimbursement Satistics</button>
       <button onclick="logout();" id="mana-logout">Log Out</button>
     </nav>
+    
 
     <section id="home-r" class="tabcontent">
       <h2>Welcome</h2>
@@ -30,38 +30,30 @@
     </section>
 
 
-    <section id="status-r" class="tabcontent">
-      <div class="change-status">
-        <h2>Change Reimbursement Status</h2>
-          <input type="number" placeholder="Reimbursement Id" id="r-id">
-          <select name="status" id="reimburse-status">
-            <option value=""></option>
-            <option value="Pending" id="pending">Pending</option>
-            <option value="Approved" id="approved">Approved</option>
-            <option value="Denied" id="denied">Denied</option>
-          </select>
-          <input type="text" placeholder="Reason for status change" maxlength="200" id="status-reason">
-          <input type="submit" id="submit-status">
-          <h3 id="status-message"></h3>
-        </div>
-    </section>
 
 
     <section id="view-r" class="tabcontent">
       <h2>Pending Reimbursement Requests</h2>
-      <div class="view-reimbursements">
+      <div class="view-reimbursements-p">
         <table>
           <thead>
             <th>Reimbursement Id</th>
             <th>Employee Id</th>
             <th>Request Purpose</th>
             <th>Amount</th>
-            <th>Status</th>
-            <th>Reason</th>
           </thead>
-          <tbody id="r-body">
+          <tbody id="r-body-p">
           </tbody>
         </table>
+
+        <h2 style="margin-top: 3rem;">Change Reimbursement Status</h2>
+        <div class="change-status">
+            <input type="number" placeholder="Reimbursement Id" id="r-id" min="1">
+            <input type="text" placeholder="Reason for status change" maxlength="200" id="status-reason">
+            <button id="approve-status" class="a-d-btn">Approve</button>
+            <button id="deny-status" class="a-d-btn">Deny</button>
+            <h3 id="status-message"></h3>
+        </div>
       </div>
     </section>
 
@@ -69,17 +61,32 @@
 
     <section id="past-r" class="tabcontent">
       <h2>Past Reimbursement Requests</h2>
-      <div class="view-reimbursements">
+      <h3 class="past-ad">Approved</h3>
+      <div class="view-reimbursements-p">
         <table>
           <thead>
             <th>Reimbursement Id</th>
             <th>Employee Id</th>
             <th>Request Purpose</th>
             <th>Amount</th>
-            <th>Status</th>
-            <th>Reason</th>
+            <th>Reason for Status</th>
           </thead>
-          <tbody id="r-body">
+          <tbody id="r-body-a">
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="past-ad">Denied</h3>
+      <div class="view-reimbursements-p">
+        <table>
+          <thead>
+            <th>Reimbursement Id</th>
+            <th>Employee Id</th>
+            <th>Request Purpose</th>
+            <th>Amount</th>
+            <th>Reason for Status</th>
+          </thead>
+          <tbody id="r-body-d">
           </tbody>
         </table>
       </div>
@@ -90,17 +97,17 @@
     <section id="statistics" class="tabcontent">
       <h2>View Reimbursement Statistics</h2>
       <div class="r-stats">
-        <select id="select-statistic">
-          <option value=""></option>
-          <option value="Highest" id="highest">Highest</option>
-          <option value="Lowest" id="lowest">Lowest</option>
-          <option value="Average" id="average">Average</option>
-          <option value="Total" id="total">Total</option>
-          <option value="Count" id="count">Count</option>
-        </select>
-        <input type="submit" id="submit-stats" onclick="viewStatistics();">
+        <button id="stat-1-btn">Employee with highest dollar amount in requests</button>
+        <p id="stat-1">Test Text</p>
+        <button id="stat-2-btn">Employee with the most reimbursement requests</button>
+        <p id="stat-2">Test Text</p>
+        <button id="stat-3-btn">Total dollar amount of approved reimbursements</button>
+        <p id="stat-3">Test Text</p>
+        <button id="stat-4-btn">Employee with the most approved reimbursement requests</button>
+        <p id="stat-4">Test Text</p>
+        <button id="stat-5-btn">Employee with the most denied reimbursement requests</button>
+        <p id="stat-5">Test Text</p>
       </div>
-      <h3 id="view-stats"></h3>
     </section>
 
 

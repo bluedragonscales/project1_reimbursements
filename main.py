@@ -145,7 +145,7 @@ def approve_reimbursement():
     try:
         request_data = request.get_json()
         r_id = request_data['reimburseId']
-        m_reason = request_data['reason']
+        m_reason = request_data['managerReason']
         approval = manager_service.service_approve_reimbursement(int(r_id), m_reason)
         return jsonify(approval), 200
     except NoLongerPendingException as n:
@@ -161,7 +161,7 @@ def deny_reimbursement():
     try:
         request_data = request.get_json()
         r_id = request_data['reimburseId']
-        m_reason = request_data['reason']
+        m_reason = request_data['managerReason']
         denial = manager_service.service_deny_reimbursement(int(r_id), m_reason)
         return jsonify(denial), 200
     except NoLongerPendingException as n:

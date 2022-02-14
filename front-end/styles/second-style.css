@@ -98,30 +98,41 @@ p {
 
 .change-status {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: space-around;
   align-items: center;
-  margin-top: 2rem;
 }
 
-.change-status > input, select {
+.change-status > input {
   margin: 1rem;
   padding: 4px 10px;
   border: #18BFF3 solid 3px;
 }
 
-.submit-button, #submit-stats, #submit-status {
+.submit-button, #submit-stats {
   color: white;
   background-color: #18BFF3;
   cursor: pointer;
 }
 
-.view-reimbursements {
+.a-d-btn {
+  color: white;
+  background-color: #18BFF3;
+  cursor: pointer;
+  margin-right: 1rem;
+  padding: 4px 10px;
+}
+
+.view-reimbursements-p {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   margin-top: 2rem;
+}
+
+#view-r h2 {
+  margin: 2rem 1rem;
 }
 
 #status-r {
@@ -145,11 +156,10 @@ p {
   text-align: center;
 }
 
-#view-stats {
-  margin: 0.5rem 25%;
-  color: red;
-  font-weight: 300;
+.past-ad {
   text-align: center;
+  margin-top: 2rem;
+  color: #18BFF3;
 }
 
 h2 {

@@ -16,89 +16,161 @@ function openTab(evt, tabName) {
 
 
 
-// TO GET ALL THE REIMBURSEMENT DATA
-// The function to send a request and create a promise while this loads.
-async function getReimburseData(){
-  tableBody.innerHTML = ``;
-  // Adding a reference to the route.
-  const viewAllReimbursements = "http://127.0.0.1:5000/manager/reimbursement";
-  // Fetching the information from the route.
-  let response = await fetch(viewAllReimbursements);
-  // Storing a reference to the json inside "rBody".
-  // let body = await response.json;
-  // So long as we get the status of 200 back, the data will be populated into the table.
+// TO GET ALL THE PENDING REIMBURSEMENT DATA
+const pendingTableBody = document.getElementById("r-body-p");
+let pendButton = document.getElementById("view");
+pendButton.addEventListener("click", getPendingReimburseData);
+
+async function getPendingReimburseData(){
+  pendingTableBody.innerHTML = ``;
+
+  const viewPending = "http://127.0.0.1:5000/manager/pendingList";
+  let response = await fetch(viewPending);
+  let pendingBody = await response.json();
+
   if(response.status == 200){
-    let body = await response.json();
-    console.log(body);
-    populateReimburseData(body);
-  } else {
+    populatePendingReimburseData(pendingBody);
+  } 
+  else {
     alert("Could not populate reimbursement data!")
   }
 };
 
 
-// TO VIEW ALL REIMBURSEMENTS
-// Putting a reference to the table inside of a JS variable.
-const tableBody = document.getElementById("r-body");
-// Making an event to activate the request with the button.
-let button = document.getElementById("view");
-button.addEventListener("click", getReimburseData);
-
-// This function will put the json data into the table on the website.
-function populateReimburseData(jsonBody){
+function populatePendingReimburseData(jsonBody){
   for(let rb of jsonBody){
     let tableRow = document.createElement("tr");
-    tableRow.innerHTML = `<td>${rb.reimburseId}</td><td>${rb.employeeId}</td><td>${rb.requestLabel}</td><td>${rb.amount}</td><td>${rb.status}</td><td>${sessionStorage.getItem("reason")}</td>`;
-    tableBody.appendChild(tableRow);
+    tableRow.innerHTML = `<td>${rb.reimburseId}</td><td>${rb.employeeId}</td><td>${rb.empReason}</td><td>${rb.amount}</td>`;
+    pendingTableBody.appendChild(tableRow);
   };
 };
 
 
 
 
-// TO SET REIMBURSEMENT STATUS
-async function setReimburseStatus(){
-  let managerInput = document.getElementById("r-id");
-  let statusInput = document.getElementById("reimburse-status");
-  let statusReason = document.getElementById("status-reason");
-  let requestStatus = "http://127.0.0.1:5000/manager/reimbursement/";
-  let response = await fetch(requestStatus + managerInput.value, {headers:{'Content-Type': 'application/json'}, method: "PATCH", body:JSON.stringify({"status": statusInput.value}) });
-  let statusMessage = document.getElementById("status-message");
+// TO APPROVE REIMBURSEMENTS
+let reimburseIdToChange = document.getElementById("r-id");
+let statusReason = document.getElementById("status-reason");
+let statusMessage = document.getElementById("status-message");
+
+let approveButton = document.getElementById("approve-status");
+approveButton.addEventListener("click", approveReimbursement);
+
+async function approveReimbursement(){
+  let approveStatus = "http://127.0.0.1:5000/manager/approve";
+  let response = await fetch(approveStatus, {headers:{'Content-Type': 'application/json'}, 
+                              method: ["PATCH"], 
+                              body:JSON.stringify({reimburseId: reimburseIdToChange.value, 
+                                                  managerReason: statusReason.value}) });
+
+  let approveBody = await response.json();
+
   if(response.status == 200){
-    let statusBody = await response.json();
-    sessionStorage.setItem("reason", statusReason.value);
-    statusMessage.textContent = `Reimbursement ID ${managerInput.value} has been ${statusInput.value}`;
-    managerInput.value = ``;
-    statusInput.value = ``;
+    statusMessage.textContent = `Reimbursement ID ${reimburseIdToChange.value} has been approved.`;
+    reimburseIdToChange.value = ``;
     statusReason.value = ``;
-  } else {
+  } 
+  else {
     statusMessage.textContent = "Failed to update reimbursement status.";
   };
 };
-let statusButton = document.getElementById("submit-status");
-statusButton.addEventListener("click", setReimburseStatus);
+
+
+
+// TO DENY REIMBURSEMENTS
+let denyButton = document.getElementById("deny-status");
+denyButton.addEventListener("click", denyReimbursement);
+
+async function denyReimbursement(){
+  let denyStatus = "http://127.0.0.1:5000/manager/deny";
+  let response = await fetch(denyStatus, {headers:{'Content-Type': 'application/json'}, 
+                              method: ["PATCH"], 
+                              body:JSON.stringify({reimburseId: reimburseIdToChange.value, 
+                                                  managerReason: statusReason.value}) });
+
+  let denyBody = await response.json();
+
+  if(response.status == 200){
+    statusMessage.textContent = `Reimbursement ID ${reimburseIdToChange.value} has been denied.`;
+    reimburseIdToChange.value = ``;
+    statusReason.value = ``;
+  } 
+  else {
+    statusMessage.textContent = "Failed to update reimbursement status.";
+  };
+};
+
+
+
+
+
+// TO VIEW PAST APPROVED REIMBURSEMENTS
+let pastApprovedTBody = document.getElementById("r-body-a");
+const pastReimburseButton = document.getElementById("past");
+pastReimburseButton.addEventListener("click", viewPastApprovals);
+
+async function viewPastApprovals(){
+  pastApprovedTBody.innerHTML = ``;
+
+  const pastApprovalsRoute = "http://127.0.0.1:5000/manager/approvals";
+  let response = await fetch(pastApprovalsRoute);
+  let approvalsBody = await response.json();
+
+  if(response.status == 200){
+    populatePastApprovals(approvalsBody);
+    viewPastDenials();
+  } 
+  else {
+    alert("Could not retrieve reimbursement data!");
+  }
+};
+
+
+function populatePastApprovals(jsonBody){
+  for(let rb of jsonBody){
+    let tableRow = document.createElement("tr");
+    tableRow.innerHTML = `<td>${rb.reimburseId}</td><td>${rb.employeeId}</td><td>${rb.empReason}</td><td>$${rb.amount}</td><td>${rb.managerReason}</td>`;
+    pastApprovedTBody.appendChild(tableRow);
+  };
+};
+
+
+
+
+
+// TO VIEW PAST DENIED REIMBURSEMENTS
+let pastDeniedTBody = document.getElementById("r-body-d");
+
+async function viewPastDenials(){
+  pastDeniedTBody.innerHTML = ``;
+
+  const pastDenialsRoute = "http://127.0.0.1:5000/manager/denials";
+  let response = await fetch(pastDenialsRoute);
+  let denialsBody = await response.json();
+
+  if(response.status == 200){
+    populatePastDenials(denialsBody);
+  } 
+  else {
+    alert("Could not retrieve reimbursement data!");
+  }
+};
+
+
+function populatePastDenials(jsonBody){
+  for(let rb of jsonBody){
+    let tableRow = document.createElement("tr");
+    tableRow.innerHTML = `<td>${rb.reimburseId}</td><td>${rb.employeeId}</td><td>${rb.empReason}</td><td>$${rb.amount}</td><td>${rb.managerReason}</td>`;
+    pastDeniedTBody.appendChild(tableRow);
+  };
+};
+
 
 
 
 
 
 // TO VIEW REIMBURSEMENT STATISTICS
-let statView = document.getElementById("select-statistic");
-async function viewStatistics(){
-  let viewStatsRoute = "http://127.0.0.1:5000/manager/statistics";
-  let response = await fetch(viewStatsRoute, {headers:{"Content-Type":"application/json"}, method:["POST"], body:JSON.stringify({"statistic": statView.value}) });
-  if(response.status == 200){
-    let statBody = await response.json();
-    populateStats(statBody);
-    statView.value = ``;
-  } else {
-    alert("Could not populate statistics!")
-  };
-};
-
-function populateStats(jsonStats){
-  let statMessage = document.getElementById("view-stats").textContent = `The ${statView.value} of all the reimbursement requests is $${jsonStats}.`;
-};
 
 
 
