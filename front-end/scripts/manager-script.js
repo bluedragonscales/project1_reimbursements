@@ -4,7 +4,6 @@ function openTab(evt, tabName) {
   for (let i = 0; i < tabcontent.length; i++) {
     tabcontent[i].style.display = "none";
     document.getElementById("status-message").textContent = ``;
-    document.getElementById("view-stats").textContent = ``;
   };
   let tablink = document.getElementsByClassName("tablink");
   for (let i = 0; i < tablink.length; i++) {
@@ -171,6 +170,125 @@ function populatePastDenials(jsonBody){
 
 
 // TO VIEW REIMBURSEMENT STATISTICS
+// Employee with the highest dollar amount in reimbursement requests.
+let highStatMessage = document.getElementById("stat-1");
+let highStatButton = document.getElementById("stat-1-btn");
+highStatButton.addEventListener("click", empWithHighestDollar);
+
+
+async function empWithHighestDollar(){
+  highStatMessage.textContent = '';
+  const statsRoute = "http://127.0.0.1:5000/manager/highestReimburseTotal";
+  let response = await fetch(statsRoute);
+  let statsBody = await response.json();
+
+  if(response.status == 200){
+    // console.log(statsBody);
+    let empName = statsBody.employeeName;
+    let reimburseTotal = statsBody.reimbursementTotal;
+    highStatMessage.textContent = `Employee ${empName} has the highest dollar total of reimbursement requests at $${reimburseTotal}.`;
+  } 
+  else {
+    alert("Could not retrieve stats.")
+  }
+};
+
+
+
+// Employee that has made the most reimbursement requests.
+let mostStatMessage = document.getElementById("stat-2");
+let mostStatButton = document.getElementById("stat-2-btn");
+mostStatButton.addEventListener("click", empWithMostRequests);
+
+async function empWithMostRequests(){
+  mostStatMessage.textContent = '';
+  const statsRoute = "http://127.0.0.1:5000/manager/mostReimburseRequests";
+  let response = await fetch(statsRoute);
+  let statsBody = await response.json();
+
+  if(response.status == 200){
+    // console.log(statsBody);
+    let empName = statsBody.employeeName;
+    let reimburseRequests = statsBody.amountOfRequests;
+    mostStatMessage.textContent = `Employee ${empName} has the most reimbursement requests at ${reimburseRequests} requests.`;
+  } 
+  else {
+    alert("Could not retrieve stats.")
+  }
+};
+
+
+
+// Total dollar amount of all reimbursement requests that have been approved.
+let approvedAmountMessage = document.getElementById("stat-3");
+let approvedAmountButton = document.getElementById("stat-3-btn");
+approvedAmountButton.addEventListener("click", approvedDollarTotal);
+
+async function approvedDollarTotal(){
+  approvedAmountMessage.textContent = '';
+  const statsRoute = "http://127.0.0.1:5000/manager/dollarTotalOfApprovals";
+  let response = await fetch(statsRoute);
+  let statsBody = await response.json();
+
+  if(response.status == 200){
+    let approvedTotal = statsBody.dollarTotalApproved;
+    approvedAmountMessage.textContent = `The dollar total of approved reimbursements comes to $${approvedTotal}.`;
+  } 
+  else {
+    alert("Could not retrieve stats.")
+  }
+};
+
+
+
+
+// The employee that has been denied the most times.
+let empDeniedMessage = document.getElementById("stat-5");
+let empDeniedButton = document.getElementById("stat-5-btn");
+empDeniedButton.addEventListener("click", empWithMostDenials);
+
+async function empWithMostDenials(){
+  empDeniedMessage.textContent = '';
+  const statsRoute = "http://127.0.0.1:5000/manager/employeeMostDenials";
+  let response = await fetch(statsRoute);
+  let statsBody = await response.json();
+
+  if(response.status == 200){
+    let empName = statsBody.employeeName;
+    let denialsTotal = statsBody.amountOfDenials;
+    empDeniedMessage.textContent = `Employee ${empName} has the most denied reimbursement requests at a total of ${denialsTotal}.`;
+  } 
+  else {
+    alert("Could not retrieve stats.")
+  }
+};
+
+
+
+
+
+// The employee that has been approved the most times.
+let empApprovedMessage = document.getElementById("stat-4");
+let empApprovedButton = document.getElementById("stat-4-btn");
+empApprovedButton.addEventListener("click", empWithMostApprovals);
+
+async function empWithMostApprovals(){
+  empApprovedMessage.textContent = '';
+  const statsRoute = "http://127.0.0.1:5000/manager/employeeMostApprovals";
+  let response = await fetch(statsRoute);
+  let statsBody = await response.json();
+
+  if(response.status == 200){
+    let empName = statsBody.employeeName;
+    let approvalsTotal = statsBody.amountOfApprovals;
+    empApprovedMessage.textContent = `Employee ${empName} has the most approved reimbursement requests at a total of ${approvalsTotal}.`;
+  } 
+  else {
+    alert("Could not retrieve stats.")
+  }
+};
+
+
 
 
 

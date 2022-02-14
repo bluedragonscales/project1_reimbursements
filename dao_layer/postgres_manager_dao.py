@@ -180,7 +180,7 @@ class PostgresManagerDAO(ManagerDAO):
 
 
 
-    # I get the total dollar amount of all reimbursements that were already approved.
+    # The total dollar amount of all reimbursements that were already approved.
     def dollar_total_of_approved_reimbursements(self):
         sql = "select sum(amount) from reimbursement where status = 'Approved'"
         cursor = connection.cursor()
