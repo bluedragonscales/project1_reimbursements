@@ -13,7 +13,9 @@ from page_object_models.employee_portal import EmployeePage
 
 # This "before_all" method starts up the application tests. Inside it we need the web driver and the POM.
 def before_all(context: Context):
-    # We use the context object to create a web driver object.
+    # The context object from the Behave framework calls the driver variable from the EmployeePage class. Then the
+    # web driver module from selenium calls the Chrome class to create an instance with our web driver passed into its
+    # constructor method. This creates our own web driver object which can be used for our steps.
     context.driver = webdriver.Chrome("chromedriver.exe")
     # We pass the new web driver object into the EmployeePage class's constructor to create an instance of that class.
     context.emp_home = EmployeePage(context.driver)

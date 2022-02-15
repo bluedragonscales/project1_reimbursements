@@ -30,3 +30,52 @@ class EmployeePage:
     def select_emp_login_button(self):
         element: WebElement = self.driver.find_element(By.XPATH, "/html/body/section/div[1]/button")
         return element
+
+
+    def select_new_reimburse_tab(self):
+        element: WebElement = self.driver.find_element(By.XPATH, "/html/body/nav/button[2]")
+        return element
+
+    def select_reason_input(self):
+        element: WebElement = self.driver.find_element(By.CSS_SELECTOR, 'textarea[cols="50"]')
+        return element
+
+    def select_amount_input(self):
+        element: WebElement = self.driver.find_element(By.CSS_SELECTOR, 'input[placeholder="Amount"')
+        return element
+
+    def select_new_reimbursement_submit_button(self):
+        element: WebElement = self.driver.find_element(By.ID, "r-submit")
+        return element
+
+    def select_new_reimbursement_success_message(self):
+        element: WebElement = self.driver.find_element(By.ID, "request-created")
+        return element
+
+    def select_pending_reimburse_tab(self):
+        element: WebElement = self.driver.find_element(By.XPATH, "/html/body/nav/button[3]")
+        return element
+
+    def select_populated_pending_reimbursement(self):
+        element: WebElement = self.driver.find_element(By.XPATH, "/html/body/section[3]/div/table/tbody/tr[1]/td[1]")
+        return element
+
+    def select_approved_reimburse_tab(self):
+        element: WebElement = self.driver.find_element(By.ID, "approved")
+        return element
+
+    def select_populated_approved_reimbursement(self):
+        element: WebElement = self.driver.find_element(By.XPATH, "/html/body/section[4]/div/table/tbody/tr[1]/td[1]")
+        return element
+
+    def select_denied_reimburse_tab(self):
+        element: WebElement = self.driver.find_element(By.ID, "denied")
+        return element
+
+    def select_populated_denied_reimbursement(self):
+        element: WebElement = self.driver.find_element(By.XPATH, "/html/body/section[5]/div/table/tbody/tr[1]/td[1]")
+        return element
+
+    def select_logout_tab(self):
+        element: WebElement = self.driver.find_element(By.ID, "emp-logout")
+        return element
