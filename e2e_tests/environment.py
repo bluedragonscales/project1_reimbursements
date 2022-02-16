@@ -3,6 +3,7 @@ from behave.runner import Context
 # From the selenium package, import the built in web driver module
 from selenium import webdriver
 # From our POM package and the employee_portal module inside that package, import the class EmployeePage.
+from e2e_tests.page_object_models.manager_portal import ManagerPage
 from page_object_models.employee_portal import EmployeePage
 
 
@@ -19,6 +20,7 @@ def before_all(context: Context):
     context.driver = webdriver.Chrome("e2e_tests/chromedriver.exe")
     # We pass the new web driver object into the EmployeePage class's constructor to create an instance of that class.
     context.emp_home = EmployeePage(context.driver)
+    context.mana_home = ManagerPage(context.driver)
     # Implicit wait will set a wait for all steps. Explicit wait will put a wait only on the steps you tell it to.
     context.driver.implicitly_wait(5)
     # This tells the selenium automation to run in a maximized window instead of a minimized window.
