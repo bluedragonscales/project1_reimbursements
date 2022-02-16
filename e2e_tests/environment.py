@@ -16,11 +16,13 @@ def before_all(context: Context):
     # The context object from the Behave framework calls the driver variable from the EmployeePage class. Then the
     # web driver module from selenium calls the Chrome class to create an instance with our web driver passed into its
     # constructor method. This creates our own web driver object which can be used for our steps.
-    context.driver = webdriver.Chrome("chromedriver.exe")
+    context.driver = webdriver.Chrome("e2e_tests/chromedriver.exe")
     # We pass the new web driver object into the EmployeePage class's constructor to create an instance of that class.
     context.emp_home = EmployeePage(context.driver)
+    # Implicit wait will set a wait for all steps. Explicit wait will put a wait only on the steps you tell it to.
+    context.driver.implicitly_wait(5)
     # This tells the selenium automation to run in a maximized window instead of a minimized window.
-    context.driver.maximize_window()
+    # context.driver.maximize_window()
 
 
 

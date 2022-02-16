@@ -1,10 +1,13 @@
 from behave import Given, When, Then
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
 
 
 # STEPS TO LOG IN
 @Given(u'the employee is on the login page')
 def get_reimbursement_login_page(context):
-    context.driver.get("http://127.0.0.1:5500/index.html")
+    context.driver.get("file:///C:/Users/kckar/Desktop/Websites/project1_reimbursements/front-end/index.html")
 
 
 @When(u'the employee types their username into the username input')
@@ -25,6 +28,7 @@ def employee_clicks_login_button(context):
 
 @Then(u'the employee is redirected to the employee portal home page')
 def employee_redirected_to_employee_portal_page(context):
+    WebDriverWait(context.driver, 10).until(expected_conditions.title_is("Employee Home"))
     assert context.driver.title == "Employee Home"
 
 
@@ -57,8 +61,8 @@ def employee_clicks_submit_button(context):
 
 @Then(u'a success message will populate')
 def success_message_populates(context):
-    success_message = context.emp_home.select_new_reimbursement_success_message().text()
-    assert success_message == "Your request has been submitted."
+    WebDriverWait(context.driver, 10).until(expected_conditions.text_to_be_present_in_element((By.ID, "request-created"), "Your request has been submitted."))
+    assert context.emp_home.select_new_reimbursement_success_message().text == "Your request has been submitted."
 
 
 
@@ -71,8 +75,10 @@ def employee_clicks_pending_tab(context):
 
 @Then(u'the Pending reimbursements will populate')
 def pending_reimbursements_populate(context):
-    pending_reimburse = context.emp_home.select_populated_pending_reimbursement().text()
-    assert pending_reimburse == "Office supplies E2E test."
+    WebDriverWait(context.driver, 10).until(expected_conditions.text_to_be_present_in_element(
+        (By.XPATH, "/html/body/section[3]/div/table/tbody/tr[1]/td[1]"), "Office supplies E2E test."
+    ))
+    assert context.emp_home.select_populated_pending_reimbursement().text == "Office supplies E2E test."
 
 
 
@@ -84,8 +90,10 @@ def employee_clicks_approved_tab(context):
 
 @Then(u'the Approved reimbursements will populate')
 def approved_reimbursements_populate(context):
-    approved_reimburse = context.emp_home.select_populated_approved_reimbursement().text()
-    assert approved_reimburse == "Sales trip: gas and food."
+    WebDriverWait(context.driver, 10).until(expected_conditions.text_to_be_present_in_element(
+        (By.XPATH, "/html/body/section[4]/div/table/tbody/tr[1]/td[1]"), "Office supplies testing"
+    ))
+    assert context.emp_home.select_populated_approved_reimbursement().text == "Office supplies testing"
 
 
 
@@ -97,8 +105,10 @@ def employee_clicks_denied_tab(context):
 
 @Then(u'the Denied reimbursements will populate')
 def denied_reimbursements_populate(context):
-    denied_reimburse = context.emp_home.select_populated_denied_reimbursement().text()
-    assert denied_reimburse == "Jello mix"
+    WebDriverWait(context.driver, 10).until(expected_conditions.text_to_be_present_in_element(
+        (By.XPATH, "/html/body/section[5]/div/table/tbody/tr[1]/td[1]"), "Jello mix"
+    ))
+    assert context.emp_home.select_populated_denied_reimbursement().text == "Jello mix"
 
 
 
