@@ -39,3 +39,10 @@ This is a project that features the ability to create and review reimbursements.
 
 These are the tables I created in the database for this project.
 ![PostgreSQL tables](/front-end/images/db-tables.jpg)
+
+
+
+These are the webpages for this project. First the employee portal and then the manager portal:
+![Employee_Portal](employee-home.jpg)
+
+![Manager_Portal](manager-home.jpg)
