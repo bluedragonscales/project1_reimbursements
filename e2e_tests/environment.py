@@ -24,7 +24,7 @@ def before_all(context: Context):
     # Implicit wait will set a wait for all steps. Explicit wait will put a wait only on the steps you tell it to.
     context.driver.implicitly_wait(5)
     # This tells the selenium automation to run in a maximized window instead of a minimized window.
-    # context.driver.maximize_window()
+    context.driver.maximize_window()
 
 
 

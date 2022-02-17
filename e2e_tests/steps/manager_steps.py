@@ -27,6 +27,7 @@ def manager_clicks_login_button(context):
 
 @Then(u'the manager will be redirected to the manager portal home page')
 def manager_redirected_to_manager_portal(context):
+    WebDriverWait(context.driver, 10).until(expected_conditions.title_is("Manager Home"))
     assert context.driver.title == "Manager Home"
 
 
@@ -45,6 +46,9 @@ def manager_clicks_pending_reimburse_tab(context):
 
 @When(u'the manager types the reimbursement id into the id input')
 def manager_inputs_reimburse_id(context):
+    WebDriverWait(context.driver, 10).until(expected_conditions.text_to_be_present_in_element((
+        By.XPATH, "/html/body/section[2]/div/table/tbody/tr[1]/td[1]"
+    ), context.mana_home.select_manager_reimburse_id_input().text))
     approve_reimburse = context.mana_home.select_reimburse_id_for_approval().text
     context.mana_home.select_manager_reimburse_id_input().send_keys(approve_reimburse)
 
@@ -62,6 +66,9 @@ def manager_clicks_approve_button(context):
 @Then(u'an approved message appears')
 def manager_approval_message_populates(context):
     approve_reimburse = context.mana_home.select_reimburse_id_for_approval().text
+    WebDriverWait(context.driver, 10).until(expected_conditions.text_to_be_present_in_element((
+        By.ID, "status-message"
+    ), f"Reimbursement ID {approve_reimburse} has been approved."))
     assert context.mana_home.select_status_change_message().text == f"Reimbursement ID {approve_reimburse} has been " \
                                                                     f"approved."
 
@@ -70,51 +77,63 @@ def manager_approval_message_populates(context):
 
 # MANAGER DENY REIMBURSEMENT STEPS
 @When(u'the manager types the bad reimburse id into the id input')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: When the manager types the bad reimburse id into the id input')
+def manager_inputs_bad_id(context):
+    context.mana_home.select_manager_reimburse_id_input().clear()
+    deny_reimburse = context.mana_home.select_reimburse_id_for_denial().text
+    context.mana_home.select_manager_reimburse_id_input().send_keys(deny_reimburse)
 
 
 @When(u'the manager types a reason for denial into the reason input')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: When the manager types a reason for denial into the reason input')
+def manager_inputs_deny_reason(context):
+    context.mana_home.select_manager_reason_input().clear()
+    context.mana_home.select_manager_reason_input().send_keys("Denied for e2e tests.")
 
 
 @When(u'the manager clicks the deny button')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: When the manager clicks the deny button')
+def manager_clicks_deny_button(context):
+    context.mana_home.select_manager_deny_button().click()
 
 
 @Then(u'a denied message appears')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Then a denied message appears')
+def denied_message_populates(context):
+    deny_reimbursement = context.mana_home.select_reimburse_id_for_denial().text
+    WebDriverWait(context.driver, 10).until(expected_conditions.text_to_be_present_in_element((
+        By.ID, "status-message"
+    ), f"Reimbursement ID {deny_reimbursement} has been denied."))
+    assert context.mana_home.select_status_change_message().text == f"Reimbursement ID {deny_reimbursement} has " \
+                                                                    f"been denied."
 
 
 
 
 # MANAGER VIEW PAST REIMBURSEMENTS STEPS
 @When(u'the manager clicks on the past reimbursements tab')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: When the manager clicks on the past reimbursements tab')
+def manager_clicks_past_reimburse_tab(context):
+    context.mana_home.select_past_reimbursements_tab().click()
 
 
 @Then(u'the past approved reimbursements populate')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Then the past approved reimbursements populate')
+def past_approved_reimbursements_populate(context):
+    WebDriverWait(context.driver, 10).until(expected_conditions.text_to_be_present_in_element((
+        By.XPATH, "/html/body/section[3]/div[1]/table/tbody/tr[1]/td[3]"
+    ), context.mana_home.select_already_approved_reimbursement().text))
+    assert context.mana_home.select_already_approved_reimbursement().text == "Sales trip that was not in FL"
 
 
 @Then(u'the past denied reimbursements populate')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Then the past denied reimbursements populate')
+def past_denied_reimbursements_populate(context):
+    assert context.mana_home.select_already_denied_reimbursement().text == "girl scout cookies"
 
 
 
 
 # MANAGER LOGOUT STEPS
 @When(u'the manager clicks on the log out tab')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: When the manager clicks on the log out tab')
+def manager_clicks_logout_tab(context):
+    context.mana_home.select_manager_logout_tab().click()
 
 
 @Then(u'the manager is redirected to the login page')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: Then the manager is redirected to the login page')
+def manager_redirected_to_login_page(context):
+    WebDriverWait(context.driver, 10).until(expected_conditions.title_is("Home"))
+    assert context.driver.title == "Home"

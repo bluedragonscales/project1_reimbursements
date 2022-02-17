@@ -18,7 +18,7 @@ class ManagerPage:
         return element
 
     def select_manager_login_button(self):
-        element: WebElement = self.driver.find_element(By.XPATH, "/html/body/div[2]/button")
+        element: WebElement = self.driver.find_element(By.XPATH, "/html/body/section/div[2]/button")
         return element
 
     def select_manager_pending_reimburse_button(self):
@@ -30,7 +30,7 @@ class ManagerPage:
         return element
 
     def select_reimburse_id_for_approval(self):
-        element: WebElement = self.driver.find_element(By.XPATH, "/html/body/div/table/tbody/tr[1]/td[1]")
+        element: WebElement = self.driver.find_element(By.XPATH, "/html/body/section[2]/div/table/tbody/tr[1]/td[1]")
         return element
 
     def select_manager_reason_input(self):
@@ -43,4 +43,28 @@ class ManagerPage:
 
     def select_status_change_message(self):
         element: WebElement = self.driver.find_element(By.ID, "status-message")
+        return element
+
+    def select_reimburse_id_for_denial(self):
+        element: WebElement = self.driver.find_element(By.XPATH, "html/body/section[2]/div/table/tbody/tr[2]/td[1]")
+        return element
+
+    def select_manager_deny_button(self):
+        element: WebElement = self.driver.find_element(By.ID, "deny-status")
+        return element
+
+    def select_past_reimbursements_tab(self):
+        element: WebElement = self.driver.find_element(By.XPATH, "/html/body/nav/button[3]")
+        return element
+
+    def select_already_approved_reimbursement(self):
+        element: WebElement = self.driver.find_element(By.XPATH, "/html/body/section[3]/div[1]/table/tbody/tr[1]/td[3]")
+        return element
+
+    def select_already_denied_reimbursement(self):
+        element: WebElement = self.driver.find_element(By.XPATH, "html/body/section[3]/div[2]/table/tbody/tr[1]/td[3]")
+        return element
+
+    def select_manager_logout_tab(self):
+        element: WebElement = self.driver.find_element(By.ID, "mana-logout")
         return element
