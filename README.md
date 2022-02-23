@@ -26,13 +26,15 @@ This is a project that features the ability to create and review reimbursements.
 
 
 ### Technologies
+- PyCharm
 - GitHub
 - Git Bash
-- PyCharm
 - pytest
 - psycopg binary
 - Flask
 - behave
+- Gherkin
+- Cucumber
 - selenium
 
 
