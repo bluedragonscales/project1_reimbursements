@@ -27,8 +27,9 @@ This is a project that features the ability to create and review reimbursements.
 
 ### Technologies
 - PyCharm
-- GitHub
-- Git Bash
+- AWS
+- DBeaver
+- PostgreSQL
 - pytest
 - psycopg binary
 - Flask
