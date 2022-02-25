@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Test Report</title>
+    <style>body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  /* do not increase min-width as some may use split screens */
+  min-width: 800px;
+  color: #999;
+}
+
+h1 {
+  font-size: 24px;
+  color: black;
+}
+
+h2 {
+  font-size: 16px;
+  color: black;
+}
+
+p {
+  color: black;
+}
+
+a {
+  color: #999;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+/******************************
+ * SUMMARY INFORMATION
+ ******************************/
+#environment td {
+  padding: 5px;
+  border: 1px solid #E6E6E6;
+}
+#environment tr:nth-child(odd) {
+  background-color: #f6f6f6;
+}
+
+/******************************
+ * TEST RESULT COLORS
+ ******************************/
+span.passed,
+.passed .col-result {
+  color: green;
+}
+
+span.skipped,
+span.xfailed,
+span.rerun,
+.skipped .col-result,
+.xfailed .col-result,
+.rerun .col-result {
+  color: orange;
+}
+
+span.error,
+span.failed,
+span.xpassed,
+.error .col-result,
+.failed .col-result,
+.xpassed .col-result {
+  color: red;
+}
+
+/******************************
+ * RESULTS TABLE
+ *
+ * 1. Table Layout
+ * 2. Extra
+ * 3. Sorting items
+ *
+ ******************************/
+/*------------------
+ * 1. Table Layout
+ *------------------*/
+#results-table {
+  border: 1px solid #e6e6e6;
+  color: #999;
+  font-size: 12px;
+  width: 100%;
+}
+#results-table th,
+#results-table td {
+  padding: 5px;
+  border: 1px solid #E6E6E6;
+  text-align: left;
+}
+#results-table th {
+  font-weight: bold;
+}
+
+/*------------------
+ * 2. Extra
+ *------------------*/
+.log {
+  background-color: #e6e6e6;
+  border: 1px solid #e6e6e6;
+  color: black;
+  display: block;
+  font-family: "Courier New", Courier, monospace;
+  height: 230px;
+  overflow-y: scroll;
+  padding: 5px;
+  white-space: pre-wrap;
+}
+.log:only-child {
+  height: inherit;
+}
+
+div.image {
+  border: 1px solid #e6e6e6;
+  float: right;
+  height: 240px;
+  margin-left: 5px;
+  overflow: hidden;
+  width: 320px;
+}
+div.image img {
+  width: 320px;
+}
+
+div.video {
+  border: 1px solid #e6e6e6;
+  float: right;
+  height: 240px;
+  margin-left: 5px;
+  overflow: hidden;
+  width: 320px;
+}
+div.video video {
+  overflow: hidden;
+  width: 320px;
+  height: 240px;
+}
+
+.collapsed {
+  display: none;
+}
+
+.expander::after {
+  content: " (show details)";
+  color: #BBB;
+  font-style: italic;
+  cursor: pointer;
+}
+
+.collapser::after {
+  content: " (hide details)";
+  color: #BBB;
+  font-style: italic;
+  cursor: pointer;
+}
+
+/*------------------
+ * 3. Sorting items
+ *------------------*/
+.sortable {
+  cursor: pointer;
+}
+
+.sort-icon {
+  font-size: 0px;
+  float: left;
+  margin-right: 5px;
+  margin-top: 5px;
+  /*triangle*/
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+}
+.inactive .sort-icon {
+  /*finish triangle*/
+  border-top: 8px solid #E6E6E6;
+}
+.asc.active .sort-icon {
+  /*finish triangle*/
+  border-bottom: 8px solid #999;
+}
+.desc.active .sort-icon {
+  /*finish triangle*/
+  border-top: 8px solid #999;
+}
+</style></head>
+  <body onLoad="init()">
+    <script>/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+
+function toArray(iter) {
+    if (iter === null) {
+        return null;
+    }
+    return Array.prototype.slice.call(iter);
+}
+
+function find(selector, elem) { // eslint-disable-line no-redeclare
+    if (!elem) {
+        elem = document;
+    }
+    return elem.querySelector(selector);
+}
+
+function findAll(selector, elem) {
+    if (!elem) {
+        elem = document;
+    }
+    return toArray(elem.querySelectorAll(selector));
+}
+
+function sortColumn(elem) {
+    toggleSortStates(elem);
+    const colIndex = toArray(elem.parentNode.childNodes).indexOf(elem);
+    let key;
+    if (elem.classList.contains('result')) {
+        key = keyResult;
+    } else if (elem.classList.contains('links')) {
+        key = keyLink;
+    } else {
+        key = keyAlpha;
+    }
+    sortTable(elem, key(colIndex));
+}
+
+function showAllExtras() { // eslint-disable-line no-unused-vars
+    findAll('.col-result').forEach(showExtras);
+}
+
+function hideAllExtras() { // eslint-disable-line no-unused-vars
+    findAll('.col-result').forEach(hideExtras);
+}
+
+function showExtras(colresultElem) {
+    const extras = colresultElem.parentNode.nextElementSibling;
+    const expandcollapse = colresultElem.firstElementChild;
+    extras.classList.remove('collapsed');
+    expandcollapse.classList.remove('expander');
+    expandcollapse.classList.add('collapser');
+}
+
+function hideExtras(colresultElem) {
+    const extras = colresultElem.parentNode.nextElementSibling;
+    const expandcollapse = colresultElem.firstElementChild;
+    extras.classList.add('collapsed');
+    expandcollapse.classList.remove('collapser');
+    expandcollapse.classList.add('expander');
+}
+
+function showFilters() {
+    const filterItems = document.getElementsByClassName('filter');
+    for (let i = 0; i < filterItems.length; i++)
+        filterItems[i].hidden = false;
+}
+
+function addCollapse() {
+    // Add links for show/hide all
+    const resulttable = find('table#results-table');
+    const showhideall = document.createElement('p');
+    showhideall.innerHTML = '<a href="javascript:showAllExtras()">Show all details</a> / ' +
+                            '<a href="javascript:hideAllExtras()">Hide all details</a>';
+    resulttable.parentElement.insertBefore(showhideall, resulttable);
+
+    // Add show/hide link to each result
+    findAll('.col-result').forEach(function(elem) {
+        const collapsed = getQueryParameter('collapsed') || 'Passed';
+        const extras = elem.parentNode.nextElementSibling;
+        const expandcollapse = document.createElement('span');
+        if (extras.classList.contains('collapsed')) {
+            expandcollapse.classList.add('expander');
+        } else if (collapsed.includes(elem.innerHTML)) {
+            extras.classList.add('collapsed');
+            expandcollapse.classList.add('expander');
+        } else {
+            expandcollapse.classList.add('collapser');
+        }
+        elem.appendChild(expandcollapse);
+
+        elem.addEventListener('click', function(event) {
+            if (event.currentTarget.parentNode.nextElementSibling.classList.contains('collapsed')) {
+                showExtras(event.currentTarget);
+            } else {
+                hideExtras(event.currentTarget);
+            }
+        });
+    });
+}
+
+function getQueryParameter(name) {
+    const match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+    return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+}
+
+function init () { // eslint-disable-line no-unused-vars
+    resetSortHeaders();
+
+    addCollapse();
+
+    showFilters();
+
+    sortColumn(find('.initial-sort'));
+
+    findAll('.sortable').forEach(function(elem) {
+        elem.addEventListener('click',
+            function() {
+                sortColumn(elem);
+            }, false);
+    });
+}
+
+function sortTable(clicked, keyFunc) {
+    const rows = findAll('.results-table-row');
+    const reversed = !clicked.classList.contains('asc');
+    const sortedRows = sort(rows, keyFunc, reversed);
+    /* Whole table is removed here because browsers acts much slower
+     * when appending existing elements.
+     */
+    const thead = document.getElementById('results-table-head');
+    document.getElementById('results-table').remove();
+    const parent = document.createElement('table');
+    parent.id = 'results-table';
+    parent.appendChild(thead);
+    sortedRows.forEach(function(elem) {
+        parent.appendChild(elem);
+    });
+    document.getElementsByTagName('BODY')[0].appendChild(parent);
+}
+
+function sort(items, keyFunc, reversed) {
+    const sortArray = items.map(function(item, i) {
+        return [keyFunc(item), i];
+    });
+
+    sortArray.sort(function(a, b) {
+        const keyA = a[0];
+        const keyB = b[0];
+
+        if (keyA == keyB) return 0;
+
+        if (reversed) {
+            return keyA < keyB ? 1 : -1;
+        } else {
+            return keyA > keyB ? 1 : -1;
+        }
+    });
+
+    return sortArray.map(function(item) {
+        const index = item[1];
+        return items[index];
+    });
+}
+
+function keyAlpha(colIndex) {
+    return function(elem) {
+        return elem.childNodes[1].childNodes[colIndex].firstChild.data.toLowerCase();
+    };
+}
+
+function keyLink(colIndex) {
+    return function(elem) {
+        const dataCell = elem.childNodes[1].childNodes[colIndex].firstChild;
+        return dataCell == null ? '' : dataCell.innerText.toLowerCase();
+    };
+}
+
+function keyResult(colIndex) {
+    return function(elem) {
+        const strings = ['Error', 'Failed', 'Rerun', 'XFailed', 'XPassed',
+            'Skipped', 'Passed'];
+        return strings.indexOf(elem.childNodes[1].childNodes[colIndex].firstChild.data);
+    };
+}
+
+function resetSortHeaders() {
+    findAll('.sort-icon').forEach(function(elem) {
+        elem.parentNode.removeChild(elem);
+    });
+    findAll('.sortable').forEach(function(elem) {
+        const icon = document.createElement('div');
+        icon.className = 'sort-icon';
+        icon.textContent = 'vvv';
+        elem.insertBefore(icon, elem.firstChild);
+        elem.classList.remove('desc', 'active');
+        elem.classList.add('asc', 'inactive');
+    });
+}
+
+function toggleSortStates(elem) {
+    //if active, toggle between asc and desc
+    if (elem.classList.contains('active')) {
+        elem.classList.toggle('asc');
+        elem.classList.toggle('desc');
+    }
+
+    //if inactive, reset all other functions and add ascending active
+    if (elem.classList.contains('inactive')) {
+        resetSortHeaders();
+        elem.classList.remove('inactive');
+        elem.classList.add('active');
+    }
+}
+
+function isAllRowsHidden(value) {
+    return value.hidden == false;
+}
+
+function filterTable(elem) { // eslint-disable-line no-unused-vars
+    const outcomeAtt = 'data-test-result';
+    const outcome = elem.getAttribute(outcomeAtt);
+    const classOutcome = outcome + ' results-table-row';
+    const outcomeRows = document.getElementsByClassName(classOutcome);
+
+    for(let i = 0; i < outcomeRows.length; i++){
+        outcomeRows[i].hidden = !elem.checked;
+    }
+
+    const rows = findAll('.results-table-row').filter(isAllRowsHidden);
+    const allRowsHidden = rows.length == 0 ? true : false;
+    const notFoundMessage = document.getElementById('not-found-message');
+    notFoundMessage.hidden = !allRowsHidden;
+}
+</script>
+    <h1>report.html</h1>
+    <p>Report generated on 25-Feb-2022 at 08:25:21 by <a href="https://pypi.python.org/pypi/pytest-html">pytest-html</a> v3.1.1</p>
+    <h2>Environment</h2>
+    <table id="environment">
+      <tr>
+        <td>Packages</td>
+        <td>{"pluggy": "1.0.0", "py": "1.11.0", "pytest": "6.2.5"}</td></tr>
+      <tr>
+        <td>Platform</td>
+        <td>Windows-10-10.0.22000-SP0</td></tr>
+      <tr>
+        <td>Plugins</td>
+        <td>{"html": "3.1.1", "metadata": "1.11.0"}</td></tr>
+      <tr>
+        <td>Python</td>
+        <td>3.10.0</td></tr></table>
+    <h2>Summary</h2>
+    <p>41 tests ran in 2.86 seconds. </p>
+    <p class="filter" hidden="true">(Un)check the boxes to filter the results.</p><input checked="true" class="filter" data-test-result="passed" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="passed">5 passed</span>, <input checked="true" class="filter" data-test-result="skipped" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="skipped">0 skipped</span>, <input checked="true" class="filter" data-test-result="failed" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="failed">36 failed</span>, <input checked="true" class="filter" data-test-result="error" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="error">0 errors</span>, <input checked="true" class="filter" data-test-result="xfailed" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="xfailed">0 expected failures</span>, <input checked="true" class="filter" data-test-result="xpassed" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="xpassed">0 unexpected passes</span>
+    <h2>Results</h2>
+    <table id="results-table">
+      <thead id="results-table-head">
+        <tr>
+          <th class="sortable result initial-sort" col="result">Result</th>
+          <th class="sortable" col="name">Test</th>
+          <th class="sortable" col="duration">Duration</th>
+          <th class="sortable links" col="links">Links</th></tr>
+        <tr hidden="true" id="not-found-message">
+          <th colspan="4">No results found. Try to check the filters</th></tr></thead>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_employee_dao.py::test_employee_login_happy</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_employee_login_happy():<br/>        # Pass if all credentials are correct.<br/>&gt;       employee = employee_dao.employee_login(&#x27;BeetFarmer&#x27;, &#x27;IambetterthanJim&#x27;)<br/><br/>DAO_Service_Tests\test_employee_dao.py:11: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_employee_dao.PostgresEmployeeDAO object at 0x0000025285617220&gt;, emp_username = &#x27;BeetFarmer&#x27;<br/>emp_password = &#x27;IambetterthanJim&#x27;<br/><br/>    def employee_login(self, emp_username: str, emp_password: str):<br/>        sql = &#x27;select * from employee where username = %s&#x27;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_employee_dao.py:16: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_employee_dao.py::test_employee_login_wrong_password_sad</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_employee_login_wrong_password_sad():<br/>        # Pass if password is incorrect.<br/>&gt;       employee = employee_dao.employee_login(&#x27;BeetFarmer&#x27;, &#x27;IambetttthanJim&#x27;)<br/><br/>DAO_Service_Tests\test_employee_dao.py:16: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_employee_dao.PostgresEmployeeDAO object at 0x0000025285617220&gt;, emp_username = &#x27;BeetFarmer&#x27;<br/>emp_password = &#x27;IambetttthanJim&#x27;<br/><br/>    def employee_login(self, emp_username: str, emp_password: str):<br/>        sql = &#x27;select * from employee where username = %s&#x27;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_employee_dao.py:16: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_employee_dao.py::test_employee_login_wrong_username_sad</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_employee_login_wrong_username_sad():<br/>        # Pass if username is incorrect.<br/>&gt;       employee = employee_dao.employee_login(&#x27;BetFrmer&#x27;, &#x27;IambetterthanJim&#x27;)<br/><br/>DAO_Service_Tests\test_employee_dao.py:21: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_employee_dao.PostgresEmployeeDAO object at 0x0000025285617220&gt;, emp_username = &#x27;BetFrmer&#x27;<br/>emp_password = &#x27;IambetterthanJim&#x27;<br/><br/>    def employee_login(self, emp_username: str, emp_password: str):<br/>        sql = &#x27;select * from employee where username = %s&#x27;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_employee_dao.py:16: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_employee_dao.py::test_employee_login_mismatched_credentials_sad</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_employee_login_mismatched_credentials_sad():<br/>        # Pass if username and password are correct, but mismatched with the wrong people.<br/>&gt;       employee = employee_dao.employee_login(&#x27;BeetFarmer&#x27;, &#x27;ilovecookies&lt;3&#x27;)<br/><br/>DAO_Service_Tests\test_employee_dao.py:26: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_employee_dao.PostgresEmployeeDAO object at 0x0000025285617220&gt;, emp_username = &#x27;BeetFarmer&#x27;<br/>emp_password = &#x27;ilovecookies&lt;3&#x27;<br/><br/>    def employee_login(self, emp_username: str, emp_password: str):<br/>        sql = &#x27;select * from employee where username = %s&#x27;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_employee_dao.py:16: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_employee_dao.py::test_find_employee_by_id_happy</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_find_employee_by_id_happy():<br/>        # Pass if employee exists.<br/>&gt;       found_employee = employee_dao.find_employee_per_id(2)<br/><br/>DAO_Service_Tests\test_employee_dao.py:34: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_employee_dao.PostgresEmployeeDAO object at 0x0000025285617220&gt;, emp_id = 2<br/><br/>    def find_employee_per_id(self, emp_id: int):<br/>        sql = &#x27;select * from employee where employee_id = %s&#x27;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_employee_dao.py:34: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_employee_dao.py::test_find_employee_by_id_sad</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_find_employee_by_id_sad():<br/>        # Pass if employee does not exist.<br/>&gt;       employee = employee_dao.find_employee_per_id(100)<br/><br/>DAO_Service_Tests\test_employee_dao.py:39: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_employee_dao.PostgresEmployeeDAO object at 0x0000025285617220&gt;, emp_id = 100<br/><br/>    def find_employee_per_id(self, emp_id: int):<br/>        sql = &#x27;select * from employee where employee_id = %s&#x27;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_employee_dao.py:34: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_employee_dao.py::test_new_reimbursement_happy</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_new_reimbursement_happy():<br/>        # Pass if information for the new reimbursement is filled out correctly.<br/>        create_reimbursement = Reimbursement(0, 4, 9.98, &#x27;&#x27;, &#x27;girl scout cookies&#x27;, &#x27;&#x27;)<br/>&gt;       new_reimbursement = employee_dao.submit_new_reimbursement(create_reimbursement)<br/><br/>DAO_Service_Tests\test_employee_dao.py:49: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>dao_layer\postgres_employee_dao.py:52: in submit_new_reimbursement<br/>    real_employee = self.find_employee_per_id(reimbursement.employee_id)<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_employee_dao.PostgresEmployeeDAO object at 0x0000025285617220&gt;, emp_id = 4<br/><br/>    def find_employee_per_id(self, emp_id: int):<br/>        sql = &#x27;select * from employee where employee_id = %s&#x27;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_employee_dao.py:34: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_employee_dao.py::test_new_reimbursement_with_wrong_id_sad</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_new_reimbursement_with_wrong_id_sad():<br/>        # Pass if the employee id does not exist.<br/>        create_reimbursement = Reimbursement(0, 200, 103.89, &#x27;&#x27;, &#x27;Some staples and paper reams.&#x27;, &#x27;&#x27;)<br/>&gt;       another_reimbursement = employee_dao.submit_new_reimbursement(create_reimbursement)<br/><br/>DAO_Service_Tests\test_employee_dao.py:69: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>dao_layer\postgres_employee_dao.py:52: in submit_new_reimbursement<br/>    real_employee = self.find_employee_per_id(reimbursement.employee_id)<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_employee_dao.PostgresEmployeeDAO object at 0x0000025285617220&gt;, emp_id = 200<br/><br/>    def find_employee_per_id(self, emp_id: int):<br/>        sql = &#x27;select * from employee where employee_id = %s&#x27;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_employee_dao.py:34: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_employee_dao.py::test_view_pending_reimbursements_happy</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_view_pending_reimbursements_happy():<br/>&gt;       pending_list = employee_dao.view_pending_emp_reimbursements(2)<br/><br/>DAO_Service_Tests\test_employee_dao.py:77: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_employee_dao.PostgresEmployeeDAO object at 0x0000025285617220&gt;, emp_id = 2<br/><br/>    def view_pending_emp_reimbursements(self, emp_id: int):<br/>        sql = &quot;select * from reimbursement where employee_id = %s and status = &#x27;Pending&#x27;&quot;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_employee_dao.py:71: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_employee_dao.py::test_view_approved_reimbursements_happy</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_view_approved_reimbursements_happy():<br/>&gt;       approved_list = employee_dao.view_approved_emp_reimbursements(3)<br/><br/>DAO_Service_Tests\test_employee_dao.py:83: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_employee_dao.PostgresEmployeeDAO object at 0x0000025285617220&gt;, emp_id = 3<br/><br/>    def view_approved_emp_reimbursements(self, emp_id: int):<br/>        sql = &quot;select * from reimbursement where employee_id = %s and status = &#x27;Approved&#x27;&quot;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_employee_dao.py:84: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_employee_dao.py::test_view_denied_reimbursements_happy</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_view_denied_reimbursements_happy():<br/>&gt;       denied_list = employee_dao.view_denied_emp_reimbursements(4)<br/><br/>DAO_Service_Tests\test_employee_dao.py:89: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_employee_dao.PostgresEmployeeDAO object at 0x0000025285617220&gt;, emp_id = 4<br/><br/>    def view_denied_emp_reimbursements(self, emp_id: int):<br/>        sql = &quot;select * from reimbursement where employee_id = %s and status = &#x27;Denied&#x27;&quot;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_employee_dao.py:98: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_employee_service.py::test_validate_employee_cant_login_with_incorrect_credentials</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_validate_employee_cant_login_with_incorrect_credentials():<br/>        try:<br/>&gt;           employee_service.service_employee_login(&#x27;BeetFarmer&#x27;, &#x27;ILoveJim&lt;3&#x27;)<br/><br/>DAO_Service_Tests\test_employee_service.py:16: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>service_layer\postgres_employee_service.py:22: in service_employee_login<br/>    login = self.employee_dao.employee_login(emp_username, emp_password)<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_employee_dao.PostgresEmployeeDAO object at 0x000002528568C280&gt;, emp_username = &#x27;BeetFarmer&#x27;<br/>emp_password = &#x27;ILoveJim&lt;3&#x27;<br/><br/>    def employee_login(self, emp_username: str, emp_password: str):<br/>        sql = &#x27;select * from employee where username = %s&#x27;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_employee_dao.py:16: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_employee_service.py::test_validate_employee_id_doesnt_exist</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_validate_employee_id_doesnt_exist():<br/>        try:<br/>&gt;           employee_service.service_find_employee_per_id(200)<br/><br/>DAO_Service_Tests\test_employee_service.py:32: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>service_layer\postgres_employee_service.py:33: in service_find_employee_per_id<br/>    employee = self.employee_dao.find_employee_per_id(emp_id)<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_employee_dao.PostgresEmployeeDAO object at 0x000002528568C280&gt;, emp_id = 200<br/><br/>    def find_employee_per_id(self, emp_id: int):<br/>        sql = &#x27;select * from employee where employee_id = %s&#x27;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_employee_dao.py:34: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_employee_service.py::test_validate_wrong_employee_id</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_validate_wrong_employee_id():<br/>        try:<br/>            wrong_emp_request = Reimbursement(0, 200, 103.89, &#x27;&#x27;, &#x27;Some staples and paper reams.&#x27;, &#x27;&#x27;)<br/>&gt;           employee_service.service_submit_new_reimbursement(wrong_emp_request)<br/><br/>DAO_Service_Tests\test_employee_service.py:53: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>service_layer\postgres_employee_service.py:48: in service_submit_new_reimbursement<br/>    elif not self.service_find_employee_per_id(reimbursement.employee_id):<br/>service_layer\postgres_employee_service.py:33: in service_find_employee_per_id<br/>    employee = self.employee_dao.find_employee_per_id(emp_id)<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_employee_dao.PostgresEmployeeDAO object at 0x000002528568C280&gt;, emp_id = 200<br/><br/>    def find_employee_per_id(self, emp_id: int):<br/>        sql = &#x27;select * from employee where employee_id = %s&#x27;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_employee_dao.py:34: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_manager_dao.py::test_manager_login_happy</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_manager_login_happy():<br/>        # Pass if all credentials are correct.<br/>&gt;       manager_login = manager_dao.manager_login(&#x27;CornellMan&#x27;, &#x27;acapella&#x27;)<br/><br/>DAO_Service_Tests\test_manager_dao.py:10: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_manager_dao.PostgresManagerDAO object at 0x00000252855F2EC0&gt;, manager_username = &#x27;CornellMan&#x27;<br/>manager_password = &#x27;acapella&#x27;<br/><br/>    def manager_login(self, manager_username: str, manager_password: str):<br/>        sql = &#x27;select * from manager where username = %s&#x27;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_manager_dao.py:17: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_manager_dao.py::test_manager_login_wrong_password_sad</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_manager_login_wrong_password_sad():<br/>        # Pass if the password is wrong.<br/>&gt;       manager_login = manager_dao.manager_login(&#x27;CornellMan&#x27;, &#x27;acapela&#x27;)<br/><br/>DAO_Service_Tests\test_manager_dao.py:15: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_manager_dao.PostgresManagerDAO object at 0x00000252855F2EC0&gt;, manager_username = &#x27;CornellMan&#x27;<br/>manager_password = &#x27;acapela&#x27;<br/><br/>    def manager_login(self, manager_username: str, manager_password: str):<br/>        sql = &#x27;select * from manager where username = %s&#x27;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_manager_dao.py:17: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_manager_dao.py::test_manager_login_wrong_username_sad</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_manager_login_wrong_username_sad():<br/>        # Pass if the username is wrong.<br/>&gt;       manager_login = manager_dao.manager_login(&#x27;AgentScarn&#x27;, &#x27;office1234&#x27;)<br/><br/>DAO_Service_Tests\test_manager_dao.py:20: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_manager_dao.PostgresManagerDAO object at 0x00000252855F2EC0&gt;, manager_username = &#x27;AgentScarn&#x27;<br/>manager_password = &#x27;office1234&#x27;<br/><br/>    def manager_login(self, manager_username: str, manager_password: str):<br/>        sql = &#x27;select * from manager where username = %s&#x27;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_manager_dao.py:17: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_manager_dao.py::test_view_pending_reimbursements_happy</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_view_pending_reimbursements_happy():<br/>&gt;       pending_list = manager_dao.all_pending_reimbursements()<br/><br/>DAO_Service_Tests\test_manager_dao.py:27: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_manager_dao.PostgresManagerDAO object at 0x00000252855F2EC0&gt;<br/><br/>    def all_pending_reimbursements(self):<br/>        sql = &quot;select * from reimbursement where status = &#x27;Pending&#x27;&quot;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_manager_dao.py:34: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_manager_dao.py::test_approve_reimbursement_happy</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_approve_reimbursement_happy():<br/>        # Pass if the reimbursement request is NOT already approved or denied.<br/>&gt;       approved = manager_dao.approve_reimbursement(32, &#x27;It better be the good kind.&#x27;)<br/><br/>DAO_Service_Tests\test_manager_dao.py:36: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>dao_layer\postgres_manager_dao.py:49: in approve_reimbursement<br/>    pending_reimbursements = self.all_pending_reimbursements()<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_manager_dao.PostgresManagerDAO object at 0x00000252855F2EC0&gt;<br/><br/>    def all_pending_reimbursements(self):<br/>        sql = &quot;select * from reimbursement where status = &#x27;Pending&#x27;&quot;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_manager_dao.py:34: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_manager_dao.py::test_approve_reimbursement_sad</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_approve_reimbursement_sad():<br/>        # Pass if the reimbursement request IS already approved or denied.<br/>&gt;       cant_approve = manager_dao.approve_reimbursement(19, &#x27;Test is not working.&#x27;)<br/><br/>DAO_Service_Tests\test_manager_dao.py:41: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>dao_layer\postgres_manager_dao.py:49: in approve_reimbursement<br/>    pending_reimbursements = self.all_pending_reimbursements()<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_manager_dao.PostgresManagerDAO object at 0x00000252855F2EC0&gt;<br/><br/>    def all_pending_reimbursements(self):<br/>        sql = &quot;select * from reimbursement where status = &#x27;Pending&#x27;&quot;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_manager_dao.py:34: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_manager_dao.py::test_deny_reimbursement_happy</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_deny_reimbursement_happy():<br/>        # Pass if the reimbursement request is NOT already approved or denied.<br/>&gt;       denied = manager_dao.deny_reimbursement(27, &quot;No cats in the office!&quot;)<br/><br/>DAO_Service_Tests\test_manager_dao.py:49: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>dao_layer\postgres_manager_dao.py:66: in deny_reimbursement<br/>    pending_reimbursements = self.all_pending_reimbursements()<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_manager_dao.PostgresManagerDAO object at 0x00000252855F2EC0&gt;<br/><br/>    def all_pending_reimbursements(self):<br/>        sql = &quot;select * from reimbursement where status = &#x27;Pending&#x27;&quot;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_manager_dao.py:34: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_manager_dao.py::test_deny_reimbursement_sad</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_deny_reimbursement_sad():<br/>        # Pass if the reimbursement request IS already approved or denied.<br/>&gt;       denied = manager_dao.deny_reimbursement(17, &quot;Test did not work&quot;)<br/><br/>DAO_Service_Tests\test_manager_dao.py:54: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>dao_layer\postgres_manager_dao.py:66: in deny_reimbursement<br/>    pending_reimbursements = self.all_pending_reimbursements()<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_manager_dao.PostgresManagerDAO object at 0x00000252855F2EC0&gt;<br/><br/>    def all_pending_reimbursements(self):<br/>        sql = &quot;select * from reimbursement where status = &#x27;Pending&#x27;&quot;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_manager_dao.py:34: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_manager_dao.py::test_view_approved_requests_happy</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_view_approved_requests_happy():<br/>&gt;       approved_list = manager_dao.view_approved_requests()<br/><br/>DAO_Service_Tests\test_manager_dao.py:61: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_manager_dao.PostgresManagerDAO object at 0x00000252855F2EC0&gt;<br/><br/>    def view_approved_requests(self):<br/>        sql = &quot;select * from reimbursement where status = &#x27;Approved&#x27;&quot;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_manager_dao.py:82: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_manager_dao.py::test_view_denied_requests_happy</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_view_denied_requests_happy():<br/>&gt;       denied_list = manager_dao.view_denied_requests()<br/><br/>DAO_Service_Tests\test_manager_dao.py:67: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_manager_dao.PostgresManagerDAO object at 0x00000252855F2EC0&gt;<br/><br/>    def view_denied_requests(self):<br/>        sql = &quot;select * from reimbursement where status = &#x27;Denied&#x27;&quot;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_manager_dao.py:95: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_manager_dao.py::test_view_all_employees_happy</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_view_all_employees_happy():<br/>&gt;       employee_list = manager_dao.view_all_employees()<br/><br/>DAO_Service_Tests\test_manager_dao.py:73: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_manager_dao.PostgresManagerDAO object at 0x00000252855F2EC0&gt;<br/><br/>    def view_all_employees(self) -&gt; list[Employee]:<br/>        sql = &quot;select * from employee&quot;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_manager_dao.py:108: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_manager_dao.py::test_all_reimbursements_per_employee_happy</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_all_reimbursements_per_employee_happy():<br/>        # Pass if employee exists.<br/>&gt;       emp_reimburse_list = manager_dao.all_reimbursements_per_employee(4)<br/><br/>DAO_Service_Tests\test_manager_dao.py:81: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_manager_dao.PostgresManagerDAO object at 0x00000252855F2EC0&gt;, emp_id = 4<br/><br/>    def all_reimbursements_per_employee(self, emp_id: int):<br/>        sql = &quot;select * from reimbursement where employee_id = %s&quot;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_manager_dao.py:123: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_manager_dao.py::test_all_reimbursements_per_employee_sad</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_all_reimbursements_per_employee_sad():<br/>        # Pass if employee does not exist.<br/>&gt;       emp_reimburse_list = manager_dao.all_reimbursements_per_employee(200)<br/><br/>DAO_Service_Tests\test_manager_dao.py:86: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_manager_dao.PostgresManagerDAO object at 0x00000252855F2EC0&gt;, emp_id = 200<br/><br/>    def all_reimbursements_per_employee(self, emp_id: int):<br/>        sql = &quot;select * from reimbursement where employee_id = %s&quot;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_manager_dao.py:123: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_manager_dao.py::test_highest_reimbursement_total_happy</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_highest_reimbursement_total_happy():<br/>&gt;       sum = manager_dao.highest_reimbursement_total()<br/><br/>DAO_Service_Tests\test_manager_dao.py:94: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>dao_layer\postgres_manager_dao.py:144: in highest_reimbursement_total<br/>    employee_list = self.view_all_employees()<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_manager_dao.PostgresManagerDAO object at 0x00000252855F2EC0&gt;<br/><br/>    def view_all_employees(self) -&gt; list[Employee]:<br/>        sql = &quot;select * from employee&quot;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_manager_dao.py:108: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_manager_dao.py::test_all_requests_per_employee_happy</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_all_requests_per_employee_happy():<br/>&gt;       all_requests = manager_dao.all_requests_per_employee()<br/><br/>DAO_Service_Tests\test_manager_dao.py:98: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>dao_layer\postgres_manager_dao.py:168: in all_requests_per_employee<br/>    employee_list = self.view_all_employees()<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_manager_dao.PostgresManagerDAO object at 0x00000252855F2EC0&gt;<br/><br/>    def view_all_employees(self) -&gt; list[Employee]:<br/>        sql = &quot;select * from employee&quot;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_manager_dao.py:108: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_manager_dao.py::test_dollar_total_of_approved_reimbursements_happy</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_dollar_total_of_approved_reimbursements_happy():<br/>&gt;       sum_approved = manager_dao.dollar_total_of_approved_reimbursements()<br/><br/>DAO_Service_Tests\test_manager_dao.py:102: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_manager_dao.PostgresManagerDAO object at 0x00000252855F2EC0&gt;<br/><br/>    def dollar_total_of_approved_reimbursements(self):<br/>        sql = &quot;select sum(amount) from reimbursement where status = &#x27;Approved&#x27;&quot;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_manager_dao.py:186: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_manager_dao.py::test_employee_with_most_denials_happy</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_employee_with_most_denials_happy():<br/>&gt;       count_denials = manager_dao.employee_with_most_denials()<br/><br/>DAO_Service_Tests\test_manager_dao.py:106: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>dao_layer\postgres_manager_dao.py:202: in employee_with_most_denials<br/>    employee_list = self.view_all_employees()<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_manager_dao.PostgresManagerDAO object at 0x00000252855F2EC0&gt;<br/><br/>    def view_all_employees(self) -&gt; list[Employee]:<br/>        sql = &quot;select * from employee&quot;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_manager_dao.py:108: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_manager_dao.py::test_employee_with_most_approvals_happy</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_employee_with_most_approvals_happy():<br/>&gt;       count_approvals = manager_dao.employee_with_most_approvals()<br/><br/>DAO_Service_Tests\test_manager_dao.py:110: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>dao_layer\postgres_manager_dao.py:227: in employee_with_most_approvals<br/>    employee_list = self.view_all_employees()<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_manager_dao.PostgresManagerDAO object at 0x00000252855F2EC0&gt;<br/><br/>    def view_all_employees(self) -&gt; list[Employee]:<br/>        sql = &quot;select * from employee&quot;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_manager_dao.py:108: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_manager_service.py::test_validate_manager_cant_login_with_incorrect_credentials</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_validate_manager_cant_login_with_incorrect_credentials():<br/>        with pytest.raises(CredentialsFalseException):<br/>&gt;           manager_service.service_manager_login(&#x27;agentscarn&#x27;, &#x27;office123&#x27;)<br/><br/>DAO_Service_Tests\test_manager_service.py:14: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>service_layer\postgres_manager_service.py:20: in service_manager_login<br/>    login = self.manager_dao.manager_login(manager_username, manager_password)<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_manager_dao.PostgresManagerDAO object at 0x0000025285760640&gt;, manager_username = &#x27;agentscarn&#x27;<br/>manager_password = &#x27;office123&#x27;<br/><br/>    def manager_login(self, manager_username: str, manager_password: str):<br/>        sql = &#x27;select * from manager where username = %s&#x27;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_manager_dao.py:17: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_manager_service.py::test_validate_request_already_approved</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_validate_request_already_approved():<br/>        try:<br/>&gt;           manager_service.service_approve_reimbursement(16, &#x27;Oops, test did not do as intended&#x27;)<br/><br/>DAO_Service_Tests\test_manager_service.py:30: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>service_layer\postgres_manager_service.py:38: in service_approve_reimbursement<br/>    try_to_approve = self.manager_dao.approve_reimbursement(reimburse_id, reason)<br/>dao_layer\postgres_manager_dao.py:49: in approve_reimbursement<br/>    pending_reimbursements = self.all_pending_reimbursements()<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_manager_dao.PostgresManagerDAO object at 0x0000025285760640&gt;<br/><br/>    def all_pending_reimbursements(self):<br/>        sql = &quot;select * from reimbursement where status = &#x27;Pending&#x27;&quot;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_manager_dao.py:34: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_manager_service.py::test_validate_request_already_denied</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_validate_request_already_denied():<br/>        try:<br/>&gt;           manager_service.service_deny_reimbursement(21, &#x27;Oops, test did not do as intended&#x27;)<br/><br/>DAO_Service_Tests\test_manager_service.py:40: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>service_layer\postgres_manager_service.py:49: in service_deny_reimbursement<br/>    try_to_deny = self.manager_dao.deny_reimbursement(reimburse_id, reason)<br/>dao_layer\postgres_manager_dao.py:66: in deny_reimbursement<br/>    pending_reimbursements = self.all_pending_reimbursements()<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_manager_dao.PostgresManagerDAO object at 0x0000025285760640&gt;<br/><br/>    def all_pending_reimbursements(self):<br/>        sql = &quot;select * from reimbursement where status = &#x27;Pending&#x27;&quot;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_manager_dao.py:34: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">DAO_Service_Tests/test_manager_service.py::test_validate_employee_doesnt_exist_so_cant_get_requests</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">def test_validate_employee_doesnt_exist_so_cant_get_requests():<br/>        try:<br/>&gt;           manager_service.service_all_reimbursements_per_employee(400)<br/><br/>DAO_Service_Tests\test_manager_service.py:50: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>service_layer\postgres_manager_service.py:74: in service_all_reimbursements_per_employee<br/>    employee_list = self.manager_dao.all_reimbursements_per_employee(emp_id)<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;dao_layer.postgres_manager_dao.PostgresManagerDAO object at 0x0000025285760640&gt;, emp_id = 400<br/><br/>    def all_reimbursements_per_employee(self, emp_id: int):<br/>        sql = &quot;select * from reimbursement where employee_id = %s&quot;<br/>&gt;       cursor = connection.cursor()<br/><span class="error">E       AttributeError: &#x27;NoneType&#x27; object has no attribute &#x27;cursor&#x27;</span><br/><br/>dao_layer\postgres_manager_dao.py:123: AttributeError<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">DAO_Service_Tests/test_employee_dao.py::test_new_reimbursement_with_wrong_amount_sad</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">DAO_Service_Tests/test_employee_dao.py::test_new_reimbursement_with_zero_amount_sad</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">DAO_Service_Tests/test_employee_service.py::test_validate_employee_cant_login_with_spaces</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">DAO_Service_Tests/test_employee_service.py::test_amount_requested_wrong_amount</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">DAO_Service_Tests/test_manager_service.py::test_validate_manager_cant_login_with_spaces</td>
+          <td class="col-duration">0.00</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="empty log">No log output captured.</div></td></tr></tbody></table></body></html>
