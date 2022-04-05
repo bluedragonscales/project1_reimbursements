@@ -26,6 +26,7 @@ This is a project that features the ability to create and review reimbursements.
 
 
 ### Technologies
+- Python
 - PyCharm
 - AWS
 - DBeaver
